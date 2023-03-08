@@ -1,0 +1,6 @@
+#!/usr/bin/gnuplot -persist
+width=10
+bin(x, s) = s*int(x/s) + width/2
+set boxwidth width
+plot 'edges.txt' u (bin($1,width)):(1.0) \
+s f w boxes fs solid 0.5 title 'гистограмма'

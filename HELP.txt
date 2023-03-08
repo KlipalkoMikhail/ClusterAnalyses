@@ -1,0 +1,26 @@
+List of the possible commands:
+
+CRCLOUD N X Y GX GY - creates a cloud of points with normal distribution,
+	              N - number of points, X - x-coordinate of the center
+                      of cloud, Y - y-coordinate of the center of cloud
+                      gx - variance in X axis, gy - variance in Y axis
+PRCLOUD - prints the cloud of points with normal distribution
+PRFIELD - prints the field of points
+WAVE - turns WAVE algorithm
+DBSCAN - turns DBscan algorithm
+KMEANS - turns k-means algrotihm
+EXPMAX - turns EM algorithm
+BUFFMOV - shift a cloud
+BUFFPST - past a cloud
+BUFFCPY - copy a cloud
+BUFFROT - rotate a cloud
+BUFFPRC - print a buffer cloud
+CALFACT - calculates the factors of the object
+PRFACT - prints the factors of the object
+CALCEN - calculates the center of the object
+SPANTRE - turns the spanning tree
+PRCEN - prints the center of the object
+RESULT - to see result of the algorithm
+SAVEDB - save data in data base
+HELP - print all of possible commands
+EXIT - ends off the programm

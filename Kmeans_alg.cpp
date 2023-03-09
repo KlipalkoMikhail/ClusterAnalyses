@@ -14,13 +14,9 @@ vector <Cluster> Kmeans_alg::k_means(int k, Field &field)
 
     for (int i = 0; i < k; i++)
     {
-        // ������� ������ �� N ���������
         vec[i].resize(N);
-        // ������� ������ � �������� �� N ���������
         clusters[i].reserve(N);
-        // ��������� �����
         clusters[i].add_p(i);
-        // ������� �����
         clusters[i].ccenter(points, N);
     }
 

@@ -59,3 +59,8 @@ void FindCluster::setName(std::string nm)
 {
     name = nm;
 }
+
+void FindCluster::getFindedClusters()
+{
+    return findedClusters;
+}

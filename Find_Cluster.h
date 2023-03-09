@@ -10,7 +10,7 @@ class FindCluster
     private:
         int ID;
         int FieldID;
-        std::vector <Cluster> FindedClusters;
+        std::vector <Cluster> findedClusters;
         int size;
         int Knumber;
         double Rnumber;
@@ -20,6 +20,7 @@ class FindCluster
         int getFieldID();
         int getSize();
         int getKnumber();
+        Cluster &getFindedClusters();
         double getRnumber();
         std::string getName();
         void setID(int id);

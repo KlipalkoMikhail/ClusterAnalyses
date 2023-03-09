@@ -183,13 +183,14 @@ class FindClusterLoader
             HeaderLineSize = PREHEADER_LINE.size();
             SizeLines = 0;
         }
+        void loadFileSize(fstream &data_base);
         void loadName(FindCluster &findCluster, fstream &data_base);
         void loadKnumber(FindCluster &findCluster, fstream &data_base);
         void loadRnumber(FindCluster &findCluster, fstream &data_base);
         void loadSize(FindCluster &findCluster, fstream &data_base);
         void SeekAndSetAllID(FindCluster &findCluster, int FindClusterID, int FieldID, fstream &data_base);
         void printParametersInFindClusterFile(fstream &data_base, FindCluster &findCluster)
-        void checkIndexPosition(int FindClusterID);
+        void isFalseIndex(int FindClusterID);
         void printHeaderLineInFile(fstream &data_base);
 };
 
@@ -207,7 +208,7 @@ void FindClusterLoader::printHeaderLineInFile(fstream &data_base)
     data_base.seekg(2*HeaderLineSize + 1, ios::beg);
 }
 
-void FindClusterLoader::checkIndexPosition(int FindClusterID)
+void FindClusterLoader::isFalseIndex(int FindClusterID)
 {
     if (FindClusterID >= SizeLines)
     {
@@ -220,7 +221,7 @@ void FindClusterLoader::SeekAndSetAllID(FindCluster &findCluster, int FindCluste
 {
     int fID;
     int fcID;
-    int Index_Line = 0;
+    int Index_Line = 2;
     const int fID_position = 17 + 26 + 5 + 11 + 1;
 
     data_base.seekg(HeaderLineSize*2 + 1);
@@ -292,22 +293,35 @@ void FindClusterLoader::printParametersInFindClusterFile(fstream &data_base, Fin
     data_base << " " << setw(10) << findCluster.getFieldID() << "   |" << endl;
 }
 
+void FindClusterLoader::loadFileSize(fstream &data_base)
+{
+    int i = 0;
+    while (data_base.tellg())
+        data_base.seekg(HeaderLineSize*(i++), ios::beg);
+    SizeLines = i;    
+}
+
 void FindClusterLoader::SaveFindCluster(FindCluster &findCluster)
 {   
     fstream data_base("data_base.db", ios::binary | ios::app | ios::out | ios::in);
 
+    SeekAndSetAllID();
     printHeaderLineFindCluster(data_base);
     printParametersInFindClusterFile(data_base);
 
     data_base.close();
 }
 
-void FindClusterLoader::LoadFindCluster(int id)
+void FindClusterLoader::LoadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
 {
     ifstream data_base("data_base.db", ios::binary | ios::in);
-    data_base.seekg(132*(id + 2) + 4,  ios::beg);
-    
-    load(field, data_base);
+    if (!isFalseIndex(findClusterID))
+    {
+        printf("Index out of range\n");
+        return;
+    }
+    SeekAnd
+    S(field, data_base);
     load_center(field, data_base);
     load_eigen_vector(field, data_base);    
     load_points_file(field, data_base);
@@ -338,115 +352,6 @@ class Loader
         FindClusterLoader getFindClusterLoader();
         ClusterLoader getClusterLoader();
 };
-
-void Loader::loadFieldSize(Field &field, fstream &data_base)
-{
-    const string HEADER_LINE =    "| ID    Size       Center_x        Center_y         Eigen_vec_1         Eigen_vec_2           Eigen_value        Points_file     |\n";
-    int HeaderLineSize = HEADER_LINE.size();
-    data_base.seekg(HeaderLineSize*(field.ID + 2) + 4);
-    int size = 0;
-    data_base >> size;
-    //cout << size << endl;
-    if (data_base.fail())
-        cout << "bad" << endl;
-    field.setSize(size);
-}
-
-void Loader::loadCenter(Field &field, fstream &data_base)
-{
-    Point center;
-    double x, y;
-
-    data_base >> x >> y;
-    center.setx(x);
-    center.sety(y);
-
-    field.factors[0] = x;
-    field.factors[1] = y;
-    //cout << x << endl << y << endl;
-
-    field.setCenter(center);
-}
-
-void Loader::loadEigenVectors(Field &field, fstream &data_base)
-{
-    data_base >> field.factors[2] >> field.factors[3] 
-              >> field.factors[4] >> field.factors[5] 
-              >> field.factors[6] >> field.factors[7];
-    //cout << field.factors[2] << endl
-    //        << field.factors[3] << endl
-     //       << field.factors[4] << endl
-       //     << field.factors[5] << endl
-         //   << field.factors[6] << endl
-           // << field.factors[7] << endl;
-}
-
-void Loader::loadPointsFile(Field &field, fstream &data_base)
-{
-    string filename;
-    ifstream points_file;
-    vector <Point> & points = field.get_points_reference();
-    Point point;
-    double x, y;
-    int NP;
-    int i = 0;
-
-    data_base >> filename;
-    //cout << filename << endl;
-    points_file.open(filename);
-    if (!points_file)
-    {
-        cerr << "File cannot be open!" << endl;
-        return;
-    }
-
-    while (!points_file.eof())
-    {
-        points_file >> NP >> x >> y;
-        //cout << NP << '\t' << x << '\t' << y << endl;
-        point.setnp(NP);
-        point.setx(x);
-        point.sety(y);
-        point.setnp(i);
-        points[i] = point;
-        i++;
-    }
-    points_file.close();
-}
-
-void Loader::setFlags(Field &field, int index)
-{
-    const int STATE = 1;
-    field.ID = index;
-    field.setState(STATE);
-    //cout << "IS EXEC: " << field.is_executed() << endl;
-}
-
-void Loader::loadField(Field &field, int id)
-{
-    fstream CardField("CardField.db", ios::binary | ios::in);
-    
-    loadSize(field, CardField);
-    loadSenter(field, CardField);
-    loadEigenVectors(field, CardField);    
-    loadPointsFile(field, CardField);
-    setFlags(field, id);
-
-    CardField.close();  
-}
-
-void Loader::LoadFindCluster(int id)
-{
-    ifstream data_base("data_base.db", ios::binary | ios::in);
-    data_base.seekg(132*(id + 2) + 4,  ios::beg);
-    
-    load(field, data_base);
-    load_center(field, data_base);
-    load_eigen_vector(field, data_base);    
-    load_points_file(field, data_base);
-    set_executed_flags(field, id);
-    data_base.close();  
-}
 
 class Saver
 {

@@ -40,7 +40,8 @@ void Controller::print_logs(const string &LOG_MESSAGE)
 
 void Controller::k_means(int k, Field &field)
 {
-    sv.save(exec.kmeans.k_means(k, field), 1);
+    vector <Cluster> findedClusters = exec.kmeans.k_means(k, field);
+    sv.saveFindCluster(findedClusters, k, 0, "K-means");
 
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "KMEANS with" << k << endl;
@@ -51,7 +52,9 @@ void Controller::k_means(int k, Field &field)
 
 void Controller::dbscan(int m , double r, Field &field)
 {
-    sv.save(exec.dbscan.dbscan(m, r, field), 3);
+    vector <Cluster> findedClusters = exec.dbscan.dbscan(m, r, field);
+    sv.saveFindCluster(findedClusters, m, r, "DBscan");
+
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "DBSCAN " << m << " " << r << " success" << endl;
     logfile_controller.close();
@@ -60,8 +63,9 @@ void Controller::dbscan(int m , double r, Field &field)
 
 void Controller::wave(double mode, Field &field)
 {
-    sv.save(exec.wave.wave(mode, field), 2);
-    //logfile_controller << "WAVE " << mode << " success" << endl;
+    vector <Cluster> findedClusters = exec.wave.wave(mode, field);
+    sv.saveFindCluster(findedClusters, 0, mode, "Wave");
+
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "WAVE " << mode << " success" << endl;
     logfile_controller.close();
@@ -71,7 +75,8 @@ void Controller::wave(double mode, Field &field)
 void Controller::exp_max(int k, Field &field)
 {
     exec.em.turn_EM(k, field);
-    sv.save((exec.em.get_storage()).clusters, 4);
+    vector <Cluster> findedClusters = exec.em.get_storage().clusters;
+    sv.saveFindCluster(findedClusters, k, 0, "EM");
 
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "EXPMAX " << k << " success" << endl;
@@ -180,45 +185,21 @@ void Controller::print_cloud(int i, Field &field)
     logfile_controller.close();
 }
 
-void Controller::find_cluster(int k, Field &field)
+void Controller::saveInFileFindCluster(int launchIndex, Field &field)
 {
-    vector <Point> points = field.p();
-    sv.cluster_save(k, field.size(), points);
+    FindCluster &findCluster = sv.getFindCluster(launchIndex);
+    string name = findCluster.getName();
+    int Knumber = findCluster.getKnumber();
+    double Rnumber = findCluster.getRnumber();
+    int size = findCluster.getSize();
 
-    int n = sv.get_k_code(k);
+    sv.saveResult(findCluster, field);
 
-    cout << "Check the folder. The result are saved." << endl;
     logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "Saved result RESULT " << k << endl;
-    cout << "Saved result RESULT " << k << endl;
-    if (n == 1) 
-    {
-        logfile_controller << "It is K means algorithm\n" << "It was done as " << k << "th algorithm\n";
-        cout << "It is K means algorithm\n" << "It was done as " << k << "th algorithm\n";
-    }
-    if (n == 2)
-    {
-        logfile_controller << "It is Wave algorithm\n" << "It was done as " << k << "th algorithm\n";
-        cout << "It is Wave algorithm\n" << "It was done as " << k << "th algorithm\n";
-    }
-    if (n == 3)
-    { 
-        logfile_controller << "It is DBscan algorithm\n" << "It was done as " << k << "th algorithm\n";
-        cout << "It is DBscan algorithm\n" << "It was done as " << k << "th algorithm\n";
-    }
-    if (n == 4) 
-    {
-        logfile_controller << "It is EXPMAX algorithm\n" << "It was done as " << k << "th algorithm\n";
-        cout << "It is EXPMAX algorithm\n" << "It was done as " << k << "th algorithm\n";
-    }
-    if (n == 5) 
-    {
-        logfile_controller << "It is SPANTREE algorithm\n" << "It was done as " << k << "th algorithm\n";
-        cout << "It is SPANTREE algorithm\n" << "It was done as " << k << "th algorithm\n";
-    }
-    logfile_controller << "This algrotihm found " << (sv.get_clusters(k)).size() << " clusters" << endl;
-    cout << "This algrotihm found " << (sv.get_clusters(k)).size() << " clusters" << endl;
+    logfile_controller  << name << "done as " << launchIndex << "th algorithm with parameters k = " << Knumber << ", r = " << Rnumber << ", size = " << size << endl;
     logfile_controller.close();
+
+    cout << name << "done as " << launchIndex << "th algorithm with parameters k = " << Knumber << ", r = " << Rnumber << ", size = " << size << endl;
 }
 
 void Controller::print_clouds(Field &field)
@@ -246,10 +227,10 @@ void Controller::print_clouds(Field &field)
 
 void Controller::calculate_factor(int k, Field &field)
 {
-    vector <Point> arr;
+    vector <Point> &arr = field.get_points_reference();
     if (k == 0)
     {
-        arr = field.p();
+        arr = field.get_points_reference();
         field.factors = exec.factors.calculate_factors(arr);
     }
     if (k == 1)
@@ -259,16 +240,18 @@ void Controller::calculate_factor(int k, Field &field)
     }
     if (k == 2)
     {
-        int s;
-        cout << "Enter the result index ";
-        cin >> s;
-        vector <Point> arr = field.p();
-        vector <Cluster> & clusters = sv.get_clusters(s);
-        int n = clusters.size();
+        int LaunchIndex;
+        FindCluster &findCluster = sv.getFindCluster(LaunchIndex);
+        vector <Cluster> & clusters = findCluster.getFindedClusters();
+        int ClusterSize = clusters.size();
         vector <vector <Point>> cluster_points(n);
-        for (int i = 0; i < n; i++)
+        int FieldSize = field.size();
+
+        cout << "Enter the launch index ";
+        cin >> LaunchIndex;
+        for (int i = 0; i < ClusterSize; i++)
         {
-            for (int j = 0; j < field.size(); j++)
+            for (int j = 0; j < FieldSize; j++)
                 {
                     if (clusters[i].tr(j))
                         cluster_points[i].push_back(arr[j]);
@@ -306,17 +289,21 @@ void Controller::print_factors(int m, Field &field)
     }
     if (m == 2)
     {
-        cout << "Enter the result code ";
-        int k;
-        cin >> k;
-        vector <Cluster> clusters = sv.get_clusters(k);
         ofstream fout;
-        cout << "fout " << endl;
-        char filename[120];
-        sprintf(filename, "gnu_%d.dat", k);
+        int LaunchIndex;
+        FindCluster &findCluster = sv.getFindCluster(LaunchIndex);
+        vector <Cluster> & clusters = findCluster.getFindedClusters();
+        int ClusterSize = clusters.size();
+        vector <vector <Point>> cluster_points(n);
+        int FieldSize = field.size();
+
+        cout << "Enter the launch index ";
+        cin >> LaunchIndex;
+
+        string filename = "gnu_" + to_string(LaunchIndex) + ".dat";
         fout.open(filename, ios::app);
 
-        for (int i = 0; i < (int)clusters.size(); i++)
+        for (int i = 0; i < ClusterSize; i++)
         {
             fout << "set arrow " << i + 1 << " from " << clusters[i].factors[0] << " , " << clusters[i].factors[1] << " to ";
             fout << clusters[i].factors[0] + clusters[i].factors[2] << " , " << clusters[i].factors[1] + clusters[i].factors[3] << " front lw 4" << endl;
@@ -324,8 +311,6 @@ void Controller::print_factors(int m, Field &field)
             fout << clusters[i].factors[0] + clusters[i].factors[4] << " , " << clusters[i].factors[1] + clusters[i].factors[5] << " front lw 4" << endl; 
         }
         fout << "load \"field_factors.dat\" " << endl;
-        cout << "fout close " << endl;
-
         fout.close();
     }
     else
@@ -347,20 +332,36 @@ void Controller::print_factors(int m, Field &field)
 void Controller::span_tree(Field &field)
 {
     exec.spanning_tree.span_the_tree(field);
+    //sv.saveFindCluster(findedClusters, 0, 0, "SpanningTree");
+    
     Status_Work = 2;
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "Span tree SPANTREE " << endl;
     logfile_controller.close();
 }
 
-void Controller::save_data_base(Field &field)
+void Controller::saveField(Field &field)
 {
-    data_base.save_bd(field, field.ID, config);
+    FieldLoader &Loader = DataBaseLoader.getFieldLoader();
+    Loader.saveField(field);
 }
 
-void Controller::load_data_base(Field &field, int index)
+void Controller::loadField(Field &field, int id)
 {
-    data_base.load_db(field, index, config);
+    FieldLoader &Loader = DataBaseLoader.getFieldLoader();
+    Loader.loadField(field, id);
+}
+
+void Controller::saveFindCluster(FindCluster &findCluster)
+{
+    FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
+    Loader.saveFindCluster(findCluster);
+}
+
+void Controller::loadFindCluster(FindCluster &findCluster, int id)
+{
+    FindClusterLoader &Loader = DataBaseLoader.getFieldLoader();
+    Loader.loadFindCluster(findCluster, id);
 }
 
 void Controller::calculate_center(Field &field)

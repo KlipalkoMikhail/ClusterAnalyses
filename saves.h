@@ -11,12 +11,12 @@ class Saves
         FindCluster FindClusterPtr;
     public:
         Saves();
+        vector <FindCluster> & getFindClusters();
+        FindCluster & getFindCluster(int index);
+        void saveFindCluster(vector <Cluster> clusters, int k, double r, int FieldID, string name);
         vector <Cluster> & get_clusters(int k);
-        void getcode(int k);
-        void save(vector <Cluster> cl, int ind);
-        void cluster_save(int m, int N, vector <Point> &points);
+        void saveResult(FindCluster &findCluster, Field &field);
         int ncluster();
-        int get_k_code(int k);
         ~Saves();
 };
 

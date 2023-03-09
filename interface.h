@@ -34,8 +34,10 @@ class Interface
     void request_is_buffer_rotate(string &message);
     void request_is_buffer_print(string &message);
     void request_is_spanning_tree(string &message);
-    void request_is_save_data(string &message);
-    void request_is_load_data(string &message);
+    void request_is_save_field(string &message);
+    void request_is_load_field(string &message);
+    void request_is_load_find_cluster(string &message);
+    void request_is_save_find_cluster(string &message);
     void request_is_exit_string(string &message);
     
     void print_logs(const string &LOG_MESSAGE);

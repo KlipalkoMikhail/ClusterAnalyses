@@ -301,18 +301,17 @@ void FindClusterLoader::loadFileSize(fstream &data_base)
     SizeLines = i;    
 }
 
-void FindClusterLoader::SaveFindCluster(FindCluster &findCluster)
+void FindClusterLoader::saveFindCluster(FindCluster &findCluster)
 {   
     fstream data_base("data_base.db", ios::binary | ios::app | ios::out | ios::in);
 
-    SeekAndSetAllID();
     printHeaderLineFindCluster(data_base);
     printParametersInFindClusterFile(data_base);
 
     data_base.close();
 }
 
-void FindClusterLoader::LoadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
+void FindClusterLoader::loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
 {
     ifstream data_base("data_base.db", ios::binary | ios::in);
     if (!isFalseIndex(findClusterID))
@@ -320,48 +319,28 @@ void FindClusterLoader::LoadFindCluster(FindCluster &findCluster, int findCluste
         printf("Index out of range\n");
         return;
     }
-    SeekAnd
-    S(field, data_base);
-    load_center(field, data_base);
-    load_eigen_vector(field, data_base);    
-    load_points_file(field, data_base);
-    set_executed_flags(field, id);
+
+    loadFileSize(data_base);
+    SeekAndSetAllID(findCluster, findClusterID, FieldID, data_base);
+    loadName(findCluster, data_base);
+    loadSize(findCluster, data_base);
+    loadKnumber(findCluster, data_base);
+    loadRnumber(findCluster, data_base);
+    
     data_base.close();  
 }
 
-class ClusterLoader
+FieldLoader &Loader::getFieldLoader()
 {
-    private:
-        int ClusterFileSizeLine;
-    public:
-        void loadFieldSize(Field &field, fstream &data_base);
-        void loadCenter(Field &field, fstream &data_base);
-        void loadEigenVectors(Field &field, fstream &data_base);
-        void loadPointsFile(Field &field, fstream &data_base);
-        void setFlags(Field &field, int index);
-};
+    return fieldLoader;
+}
 
-class Loader
+FindClusterLoader &Loader::getFindClusterLoader()
 {
-    private:
-        FieldLoader fieldLoader;
-        FindClusterLoader findClusterLoader;
-        ClusterLoader clusterLoader;
-    public:
-        FieldLoader getFieldLoader();
-        FindClusterLoader getFindClusterLoader();
-        ClusterLoader getClusterLoader();
-};
+    return findClusterLoader;
+}
 
-class Saver
+ClusterLoader &Loader::getClusterLoader()
 {
-    private:
-    public:
-        void printParametersInFieldFile(fstream &data_base, Field &field);
-        void printHeaderLineFieldFile(fstream &data_base);
-        void printHeaderLineFindCluster(fstream &data_base);
-        void printParametersInFindClusterFile(fstream &data_base, FindClusterParameters parameters);
-        void SaveField(Field &field);
-        void SaveFindCluster(FindClusterParameters parameters);
-        
-};
+    return clusterLoader;
+}

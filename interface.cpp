@@ -177,7 +177,7 @@ void Interface::request_is_find_cluster(string &message)
     cin >> algorithm_index;
 
     message = "RESULT" + to_string(field_index) + to_string(algorithm_index);
-    controller.find_cluster(algorithm_index, controller.fields[field_index]);
+    controller.saveInFileFindCluster(algorithm_index, controller.fields[field_index]);
 }
 
 void Interface::request_is_print_center(string &message)
@@ -270,7 +270,7 @@ void Interface::request_is_spanning_tree(string &message)
     controller.span_tree(controller.fields[field_index]);
 }
 
-void Interface::request_is_save_data(string &message)
+void Interface::request_is_save_field(string &message)
 {
     int field_index = 0;
 
@@ -278,10 +278,10 @@ void Interface::request_is_save_data(string &message)
     cin >> field_index;
 
     message = "SAVEDB" + to_string(field_index);
-    controller.save_data_base(controller.fields[field_index]);
+    controller.saveField(controller.fields[field_index]);
 }
 
-void Interface::request_is_load_data(string &message)
+void Interface::request_is_load_field(string &message)
 {
     int field_index = 0;
 
@@ -289,7 +289,37 @@ void Interface::request_is_load_data(string &message)
     cin >> field_index;
 
     message = "LOADDB" + to_string(field_index);
-    controller.load_data_base(controller.fields[field_index], field_index);
+    controller.loadField(controller.fields[field_index], field_index);
+    cout << "Data is loaded" << endl;
+}
+
+void Interface::request_is_load_find_cluster(string &message)
+{
+    int field_index = 0;
+    int findClusterIndex = 0;
+
+    cout << "Enter field index (starts with 0): ";
+    cin >> field_index;
+    cout << "Enter findcluster index (starts with 0): ";
+    cin >> findClusterIndex;
+
+    message = "LOADDB" + to_string(field_index);
+    controller.loadFindCluster(controller.sv.getFindCluster(findClusterIndex), field_index);
+    cout << "Data is loaded" << endl;
+}
+
+void Interface::request_is_save_find_cluster(string &message)
+{
+    int field_index = 0;
+    int findClusterIndex = 0;
+
+    cout << "Enter field index (starts with 0): ";
+    cin >> field_index;
+    cout << "Enter findcluster index (starts with 0): ";
+    cin >> findClusterIndex;
+
+    message = "LOADDB" + to_string(field_index);
+    controller.saveFindCluster(controller.sv.getFindCluster(findClusterIndex));
     cout << "Data is loaded" << endl;
 }
 
@@ -340,8 +370,10 @@ public:
     string ROTATE_BUFF = "BUFFROT";
     string PRINT_BUFF = "BUFFPRC";
     string SPAN_TREE = "SPANTRE";
-    string SAVE_DB = "SAVEDB";
-    string LOAD_DB = "LOADDB";
+    string SAVE_FIELD = "SAVE_FIELD";
+    string LOAD_FIELD = "LOAD_FIELD";
+    string SAVE_FINDC = "SAVE_FINDC";
+    string LOAD_FINDC = "LOAD_FINDC";
     string EXIT = "EXIT";
     string HELP = "HELP";
 };
@@ -392,10 +424,14 @@ int Interface::Starts()
         request_is_buffer_print(message);
     if (request == commands.SPAN_TREE)
         request_is_spanning_tree(message);
-    if (request == commands.SAVE_DB)
-        request_is_save_data(message);
-    if (request == commands.LOAD_DB)
-        request_is_load_data(message);
+    if (request == commands.SAVE_FIELD)
+        request_is_save_field(message);
+    if (request == commands.LOAD_FIELD)
+        request_is_load_field(message);
+    if (request == commands.SAVE_FINDC)
+        request_is_save_find_cluster(message);
+    if (request == commands.LOAD_FINDC)
+        request_is_load_find_cluster(message);
     if (request == commands.EXIT)
     {
         request_is_exit_string(message);

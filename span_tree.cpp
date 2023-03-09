@@ -8,7 +8,6 @@ using namespace std;
 
 void Span_tree::span_the_tree(Field & field)
 {
-    // ������� ��������, ������� ����������, ������� �����, ������� a, b, nul, ���������� N - ����� �����, T - ������
     vector <Cluster> clusters;
     vector <Point> pt = field.p();
 
@@ -65,21 +64,16 @@ void Span_tree::span_the_tree(Field & field)
         {
             for (int j = 0; j < N; j++)
             {
-                //cout << "###################" << endl;
-                //cout << "D[*it][j] = " << D[*it][j] << " || min = " << min << endl;
-                //cout << "i*j = " << (bl[j]*bl[*it]) << endl;
                 if ((D[*it][j] > 0) && (D[*it][j] < min) && !(bl[j] && bl[*it]))
                 {
                     min = D[*it][j];
                     x = *it;
                     y = j;
-                    //cout << "min is ( " << x << " " << y << " )" << endl;
+
                 }
             }
         }
-        //cout << "D[x][y] = " << D[x][y] << " || min = " << min << endl;
-        //cout << "min is ( " << x << " " << y << " )" << endl;
-        //cout << "###################" << endl;
+
         if (min == DBL_MAX) break;
         tree.push_back(x);
         tree.push_back(y);
@@ -89,14 +83,6 @@ void Span_tree::span_the_tree(Field & field)
         D[x][y] = -1;
         min = DBL_MAX;
     }
-
-    // ��� ��� ����������
-    // ����� ������� �� ������ � ���� ����������� �����
-    // ��������� ����� � ������ � ������ �����
-    // ����� ���������� � ������
-    // ���� ����������� ���������� ����� ����� ������
-    // ��������� �����, ���� ��� ������� �� ���������
-    // �����
 
     ofstream fout("out.dat");
     for (int i = 0; i < N; i++)

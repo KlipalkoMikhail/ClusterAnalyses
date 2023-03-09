@@ -38,7 +38,7 @@ void printInTextFileGNUPlotCommands(FindCluster &findCluster)
     gnufile.close();
 }
 
-void Saves::cluster_save(FindCluster &findCluster, Field &field)
+void Saves::saveResult(FindCluster &findCluster, Field &field)
 {
     saveDataInFiles(findCluster, field);
     printInTextFileGNUPlotCommands(findCluster);
@@ -56,11 +56,17 @@ Saves::Saves()
     size = 0;
 }
 
-void Saves::save(vector <Cluster> cl, int ind)
+void Saves::saveFindCluster(vector <Cluster> clusters, int k, double r, int FieldID, string name)
 {
-    clust[k] = cl;
-    codes[k] = ind;
-    k++;
+    vector <Cluster> &findedClusters = findClusters[size].getFindedClusters();
+    int size = findedClusters.size();
+    findClusters[size].setname(name);
+    findClusters[size].setID(ID);
+    findClusters[size].setFieldID(FID);
+    findClusters[size].setKnumber(k);
+    findClusters[size].setRnumber(r);
+    findClusters[size].setSize(size);
+    size++;
 }
 
 Saves::~Saves(){}
@@ -83,4 +89,14 @@ vector <Cluster> & Saves::get_clusters(int FCID)
 {
     findedClusters = findClusters[FCID].getFindedClusters();
     return findedClusters;
+}
+
+vector <FindCluster> &Saves::getFindClusters()
+{
+    return findClusters;
+}
+
+FindCluster & Saves::getFindCluster(int index)
+{
+    return findClusters[index];
 }

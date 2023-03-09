@@ -16,7 +16,7 @@ class Controller
         Exec exec;
         Field fields[10];
         Saves sv;
-        Save_BD data_base;
+        Loader DataBaseLoader;
         Config config;
         ofstream logfile_controller;
         int fields_size;
@@ -25,7 +25,7 @@ class Controller
         void print_field(Field &field);
         void k_means(int k, Field &field);
         void create_cloud(Cloud_parameters cloud_parameters);
-        void find_cluster(int k, Field &field);
+        void saveInFileFindCluster(int launchIndex, Field &field);
         void wave(double mode, Field &field);
         void dbscan(int m, double r, Field &field);
         void print_factors(int k, Field &field);
@@ -36,9 +36,11 @@ class Controller
         void calculate_factor(int k, Field &field);
         void calculate_center(Field &field);
         void span_tree(Field &field);
-        void save_data_base(Field &field);
         void load_data_base(Field &field, int index);
         void print_logs(const string &LOG_MESSAGE);
+        void saveField(Field &field);
+        void loadField(Field &field, int id);
+        void saveFindCluster(FindCluster findCluster);
         ~Controller();
 };
 

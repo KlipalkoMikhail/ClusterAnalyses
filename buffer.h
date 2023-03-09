@@ -1,6 +1,6 @@
 #ifndef BUFFER_H
 #define BUFFER_H
-#include <bits/stdc++.h>
+#include "headers.h"
 #include "cloud.h"
 #include "field.h"
 using namespace std;
@@ -19,6 +19,5 @@ class Buffer
         void print();
         ~Buffer();
 };
-
 
 #endif

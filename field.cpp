@@ -68,7 +68,7 @@ void Field::PrintPointsInFile()
     string filename = "MyPoint_" + ID;
     ofstream PointFile(filename, ios::out | ios:: binary);
 
-    for (int i = 0; i < field.size(); i++)
+    for (int i = 0; i < N; i++)
         PointFile << points[i].getNP() << " " << points[i].getx() << " " << points[i].gety() << " ";
     PointFile.close();
 }

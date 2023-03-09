@@ -36,11 +36,11 @@ class Controller
         void calculate_factor(int k, Field &field);
         void calculate_center(Field &field);
         void span_tree(Field &field);
-        void load_data_base(Field &field, int index);
         void print_logs(const string &LOG_MESSAGE);
         void saveField(Field &field);
         void loadField(Field &field, int id);
-        void saveFindCluster(FindCluster findCluster);
+        void saveFindCluster(FindCluster &findCluster);
+        void loadFindCluster(FindCluster &findCluster, int findClusterID, int fieldID);
         ~Controller();
 };
 

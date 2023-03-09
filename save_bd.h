@@ -24,8 +24,8 @@ class FindClusterLoader
         void loadRnumber(FindCluster &findCluster, fstream &data_base);
         void loadSize(FindCluster &findCluster, fstream &data_base);
         void SeekAndSetAllID(FindCluster &findCluster, int FindClusterID, int FieldID, fstream &data_base);
-        void printParametersInFindClusterFile(fstream &data_base, FindCluster &findCluster)
-        void isFalseIndex(int FindClusterID);
+        void printParametersInFindClusterFile(fstream &data_base, FindCluster &findCluster);
+        bool isFalseIndex(int FindClusterID);
         void printHeaderLineInFile(fstream &data_base);
         void loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID);
         void saveFindCluster(FindCluster &findCluster);

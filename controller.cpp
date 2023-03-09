@@ -40,8 +40,9 @@ void Controller::print_logs(const string &LOG_MESSAGE)
 
 void Controller::k_means(int k, Field &field)
 {
+    string name = "K-means";
     vector <Cluster> findedClusters = exec.kmeans.k_means(k, field);
-    sv.saveFindCluster(findedClusters, k, 0, "K-means");
+    sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
 
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "KMEANS with" << k << endl;
@@ -52,8 +53,9 @@ void Controller::k_means(int k, Field &field)
 
 void Controller::dbscan(int m , double r, Field &field)
 {
+    string name = "DBscan";
     vector <Cluster> findedClusters = exec.dbscan.dbscan(m, r, field);
-    sv.saveFindCluster(findedClusters, m, r, "DBscan");
+    sv.saveFindCluster(findedClusters, m, r, field.ID, name);
 
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "DBSCAN " << m << " " << r << " success" << endl;
@@ -63,8 +65,9 @@ void Controller::dbscan(int m , double r, Field &field)
 
 void Controller::wave(double mode, Field &field)
 {
+    string name = "Wave";
     vector <Cluster> findedClusters = exec.wave.wave(mode, field);
-    sv.saveFindCluster(findedClusters, 0, mode, "Wave");
+    sv.saveFindCluster(findedClusters, 0, mode, field.ID, name);
 
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "WAVE " << mode << " success" << endl;
@@ -74,9 +77,10 @@ void Controller::wave(double mode, Field &field)
 
 void Controller::exp_max(int k, Field &field)
 {
+    string name = "EM";
     exec.em.turn_EM(k, field);
     vector <Cluster> findedClusters = exec.em.get_storage().clusters;
-    sv.saveFindCluster(findedClusters, k, 0, "EM");
+    sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
 
     logfile_controller.open("logfile_controller.txt", ios::app);
     logfile_controller << "EXPMAX " << k << " success" << endl;
@@ -244,8 +248,8 @@ void Controller::calculate_factor(int k, Field &field)
         FindCluster &findCluster = sv.getFindCluster(LaunchIndex);
         vector <Cluster> & clusters = findCluster.getFindedClusters();
         int ClusterSize = clusters.size();
-        vector <vector <Point>> cluster_points(n);
         int FieldSize = field.size();
+        vector <vector <Point>> cluster_points(FieldSize);
 
         cout << "Enter the launch index ";
         cin >> LaunchIndex;
@@ -294,8 +298,6 @@ void Controller::print_factors(int m, Field &field)
         FindCluster &findCluster = sv.getFindCluster(LaunchIndex);
         vector <Cluster> & clusters = findCluster.getFindedClusters();
         int ClusterSize = clusters.size();
-        vector <vector <Point>> cluster_points(n);
-        int FieldSize = field.size();
 
         cout << "Enter the launch index ";
         cin >> LaunchIndex;
@@ -358,10 +360,10 @@ void Controller::saveFindCluster(FindCluster &findCluster)
     Loader.saveFindCluster(findCluster);
 }
 
-void Controller::loadFindCluster(FindCluster &findCluster, int id)
+void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
 {
-    FindClusterLoader &Loader = DataBaseLoader.getFieldLoader();
-    Loader.loadFindCluster(findCluster, id);
+    FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
+    Loader.loadFindCluster(findCluster, findClusterID, FieldID);
 }
 
 void Controller::calculate_center(Field &field)

@@ -3,8 +3,8 @@
 
 void saveDataInFiles(FindCluster &findCluster, Field &field)
 {
-    const vector <Cluster> &findedClusters = findCluster.getFindedClusters;
-    const vector <Point> &points = field.get_points_reference();
+    vector <Cluster> &findedClusters = findCluster.getFindedClusters();
+    vector <Point> &points = field.get_points_reference();
     int ClusterSize = findedClusters.size();
     int FieldSize = field.size();
     int FCID = findCluster.getID();
@@ -16,7 +16,7 @@ void saveDataInFiles(FindCluster &findCluster, Field &field)
         filename = "OutPut_" + to_string(FCID) + to_string(i + 1);
         fout.open(filename);
         for (int j = 0; j < FieldSize; j++)
-            if (clusters[i].tr(j) == 1)
+            if (findedClusters[i].tr(j) == 1)
                 fout << showpos << points[j].getx() << "\t\t" << showpos << points[j].gety() << endl;
         fout.close();
     }
@@ -26,7 +26,7 @@ void printInTextFileGNUPlotCommands(FindCluster &findCluster)
 {
     ofstream gnufile;
     int FCID = findCluster.getID();
-    int ClusterSize = findedClusters.size();
+    int ClusterSize = findCluster.getSize();
     string filename = "GnuFile_" + to_string(FCID);
 
     gnufile.open(filename);
@@ -60,9 +60,9 @@ void Saves::saveFindCluster(vector <Cluster> clusters, int k, double r, int Fiel
 {
     vector <Cluster> &findedClusters = findClusters[size].getFindedClusters();
     int size = findedClusters.size();
-    findClusters[size].setname(name);
-    findClusters[size].setID(ID);
-    findClusters[size].setFieldID(FID);
+    findClusters[size].setName(name);
+    findClusters[size].setID(size);
+    findClusters[size].setFieldID(FieldID);
     findClusters[size].setKnumber(k);
     findClusters[size].setRnumber(r);
     findClusters[size].setSize(size);
@@ -71,23 +71,9 @@ void Saves::saveFindCluster(vector <Cluster> clusters, int k, double r, int Fiel
 
 Saves::~Saves(){}
 
-void Saves::getcode(int k)
-{
-    if (codes[k] == 1) cout << "It is K means algorithm\n" << "It was done as " << k << "th algorithm\n";
-    if (codes[k] == 2) cout << "It is Wave algorithm\n" << "It was done as " << k << "th algorithm\n";
-    if (codes[k] == 3) cout << "It is DBscan algorithm\n" << "It was done as " << k << "th algorithm\n";
-    if (codes[k] == 4) cout << "It is EXPMAX algorithm\n" << "It was done as " << k << "th algorithm\n";
-    if (codes[k] == 5) cout << "It is SPANTREE algorithm\n" << "It was done as " << k << "th algorithm\n";
-}
-
-int Saves::get_k_code(int k)
-{
-    return codes[k];
-}
-
 vector <Cluster> & Saves::get_clusters(int FCID)
 {
-    findedClusters = findClusters[FCID].getFindedClusters();
+    vector <Cluster> &findedClusters = findClusters[FCID].getFindedClusters();
     return findedClusters;
 }
 

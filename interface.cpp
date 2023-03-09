@@ -304,7 +304,7 @@ void Interface::request_is_load_find_cluster(string &message)
     cin >> findClusterIndex;
 
     message = "LOADDB" + to_string(field_index);
-    controller.loadFindCluster(controller.sv.getFindCluster(findClusterIndex), field_index);
+    controller.loadFindCluster(controller.sv.getFindCluster(findClusterIndex), findClusterIndex, field_index);
     cout << "Data is loaded" << endl;
 }
 

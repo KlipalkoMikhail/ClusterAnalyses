@@ -20,7 +20,7 @@ class FindCluster
         int getFieldID();
         int getSize();
         int getKnumber();
-        Cluster &getFindedClusters();
+        vector <Cluster> &getFindedClusters();
         double getRnumber();
         std::string getName();
         void setID(int id);

@@ -48,4 +48,49 @@ short int Cluster::tr(int k)
     return blong[k];
 }
 
+int Cluster::getID()
+{
+    return ID;
+}
+
+int Cluster::getFCID()
+{
+    return FCID;
+}
+
+int Cluster::getSize()
+{
+    return size;
+}
+
+Point Cluster::getCenter()
+{
+    return center;
+}
+
+void Cluster::setID(int id)
+{
+    ID = id;
+}
+
+void Cluster::setFCID(int fcid)
+{
+    FCID = fcid;
+}
+
+void Cluster::setSize(int sz)
+{
+    size = sz;
+}
+
+void Cluster::setCenter(Point cen)
+{
+    center = cen;
+}
+
+int Cluster::getFieldSize()
+{
+    return blong.size();
+}
+
 Cluster::~Cluster(){}

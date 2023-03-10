@@ -16,6 +16,10 @@ class FindCluster
         double Rnumber;
         std::string name; 
     public:
+        FindCluster()
+        {
+            findedClusters.resize(100);
+        }
         int getID();
         int getFieldID();
         int getSize();

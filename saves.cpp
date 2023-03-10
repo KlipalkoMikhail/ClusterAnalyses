@@ -60,6 +60,14 @@ void Saves::saveFindCluster(vector <Cluster> clusters, int k, double r, int Fiel
     vector <Cluster> &findedClusters = findClusters[size].getFindedClusters();
     int ClustersSize = clusters.size();
     findedClusters = clusters;
+    
+    for(int i = 0; i < ClustersSize; i++)
+    {
+        Cluster & cluster = findedClusters[i];
+        cluster.setID(i);
+        cluster.setFCID(size);
+    }
+    
     findClusters[size].setName(name);
     cout << name << endl;
     findClusters[size].setID(size);

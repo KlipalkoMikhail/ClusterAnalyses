@@ -17,6 +17,45 @@ double distance(const Point &x, const Point &y)
     return sqrt((x.getx() - y.getx())*(x.getx()- y.getx()) + (x.gety() - y.gety())*(x.gety() - y.gety()));
 }
 
+void calculate_clusters_center(vector <Cluster> &clusters, Field &field)
+{
+    Point center;
+    vector <Point> & points = field.get_points_reference();
+    double x = 0;
+    double y = 0;
+    int size = 0;
+    int ClusterSize = clusters.size();
+    int N = field.size();
+
+    for (int j = 0; j < ClusterSize; j++)
+    {
+        Cluster & cluster = clusters[j];
+        for (int i = 0; i < N; i++)
+        {
+            if (cluster.tr(i) == 1)
+            {
+                x += points[i].getx();
+                y += points[i].gety();
+                size++;
+            }
+        }
+        if (size != 0)
+        {
+            x = x/size;
+            y = y/size;
+        }
+        else x = y = 0;
+
+        center.setx(x);
+        center.sety(y);
+        cluster.setCenter(center);
+        cluster.setSize(size);
+        size = 0;
+        x = 0;
+        y = 0;
+    }
+}
+
 Controller::Controller()
 {
     Status_Work = 1;
@@ -355,19 +394,53 @@ void Controller::loadField(Field &field, int id)
     Loader.loadField(field, id);
 }
 
+void createClusterFiles(FindCluster &findCluster)
+{
+    string filename;
+    ofstream fout;
+    vector <Cluster> &findedClusters = findCluster.getFindedClusters();
+    int ClustersSize = findCluster.getSize();
+
+    for(int i = 0; i < ClustersSize; i++)
+    {
+        Cluster & cluster = findedClusters[i];
+        filename = "ClusterPoints_" + to_string(cluster.getFCID()) + "_" + to_string(cluster.getID()) + ".txt";
+        fout.open(filename, ios::out | ios::binary);
+        for (int j = 0; j < cluster.getFieldSize(); j++)
+        {
+            if (cluster.tr(j) == 1)
+                fout << j << " ";
+        }
+        fout.close();
+    }
+}
+
 void Controller::saveFindCluster(FindCluster &findCluster)
 {
     FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
     Loader.saveFindCluster(findCluster);
+    ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
+    calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
+    CLoader.saveClusters(findCluster);
+    createClusterFiles(findCluster);
 }
 
 void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
 {
     FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
     Loader.loadFindCluster(findCluster, findClusterID, FieldID);
-        FindCluster testfindCluster = sv.getFindCluster(0);
+    FindCluster testfindCluster = sv.getFindCluster(0);
     findCluster.printParameters();
     testfindCluster.printParameters();
+
+    ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
+    vector <Cluster> &findedClusters = findCluster.getFindedClusters();
+    int ClusterSize = findCluster.getSize();
+    for (int i = 0; i < ClusterSize; i++)
+        findedClusters[i].reserve(fields[FieldID].size());
+    CLoader.loadClusters(findCluster);
+
+    //calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
 }
 
 void Controller::calculate_center(Field &field)

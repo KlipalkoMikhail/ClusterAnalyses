@@ -12,6 +12,7 @@ void FieldLoader::printHeaderLineFieldFile(fstream &data_base)
 {
     string ReadedLine;
     string HEADER_LINE = settings.getHEADER_LINE();
+    int HEADER_LINE_SIZE = settings.getHEADER_LINE_SIZE();
 
     getline(data_base, ReadedLine);
     if (data_base.eof())
@@ -24,10 +25,10 @@ void FieldLoader::printHeaderLineFieldFile(fstream &data_base)
     }
 
     data_base.clear();
-    data_base.seekg(HeaderLineSize, ios::beg);
+    data_base.seekg(HEADER_LINE_SIZE, ios::beg);
 }
 
-void FieldLoader::printParametersInFieldFile(fstream &data_base, Field &field)
+void FieldLoader::printParametersInFieldFile(Field &field, fstream &data_base)
 {
     string block;
 
@@ -69,10 +70,8 @@ void FieldLoader::saveField(Field &field)
 
 void FieldLoader::loadSize(Field &field, fstream &data_base)
 {
-    data_base.seekg(HeaderLineSize*(field.ID + 1) + 4);
     int size = 0;
     data_base >> size;
-    //cout << size << endl;
     if (data_base.fail())
         cout << "bad" << endl;
     field.setSize(size);
@@ -89,7 +88,6 @@ void FieldLoader::loadCenter(Field &field, fstream &data_base)
 
     field.factors[0] = x;
     field.factors[1] = y;
-    //cout << x << endl << y << endl;
 
     field.setCenter(center);
 }
@@ -118,7 +116,6 @@ void FieldLoader::loadPointsFile(Field &field, fstream &data_base)
     int i = 0;
 
     data_base >> filename;
-    //cout << filename << endl;
     points_file.open(filename);
     if (!points_file)
     {
@@ -148,15 +145,36 @@ void FieldLoader::setFlags(Field &field, int index)
     //cout << "IS EXEC: " << field.is_executed() << endl;
 }
 
+void FieldLoader::loadID(Field &field, fstream &data_base)
+{
+    int fID;
+    int FieldID = field.ID;
+    int Index_Line = 1;
+    int HeaderLineSize = settings.getHEADER_LINE_SIZE();
+    
+    data_base.seekg(HeaderLineSize, ios::beg);
+    data_base >> fID;
+
+    while (fID != FieldID && !data_base.eof())
+    {
+        data_base.seekg(HeaderLineSize*(1 + Index_Line), ios::beg);
+        data_base >> fID;
+        if (data_base.fail())
+            cout << "bad" << endl;
+        Index_Line++;       
+    }
+}
+
 void FieldLoader::loadField(Field &field, int id)
 {
     fstream CardField("CardField.db", ios::binary | ios::in);
     
+    setFlags(field, id);
+    loadID(field, CardField);
     loadSize(field, CardField);
     loadCenter(field, CardField);
     loadEigenVectors(field, CardField);    
     loadPointsFile(field, CardField);
-    setFlags(field, id);
 
     CardField.close();  
 }
@@ -165,7 +183,6 @@ void FindClusterLoader::printHeaderLineInFile(fstream &data_base)
 {
     string ReadedLine;
     string HEADER_LINE = settings.getHEADER_LINE();
-    cout << HEADER_LINE;
 
     getline(data_base, ReadedLine);
     if (data_base.eof())
@@ -213,8 +230,6 @@ void FindClusterLoader::SeekAndSetAllID(FindCluster &findCluster, int FindCluste
             cout << "bad" << endl;
         Index_Line++;       
     }
-    cout << fID << " " << fID << endl;
-    cout << Index_Line;
     findCluster.setID(fcID);
     findCluster.setFieldID(fID);
     data_base.seekg(HeaderLineSize*Index_Line + IDblock_width, ios::beg);
@@ -391,7 +406,6 @@ void ClusterLoader::printHeaderLineInFile(fstream &data_base)
 {
     string ReadedLine;
     string HEADER_LINE = settings.getHEADER_LINE();
-    cout << HEADER_LINE;
 
     getline(data_base, ReadedLine);
     if (data_base.eof())
@@ -420,24 +434,16 @@ void ClusterLoader::loadClusters(FindCluster &findCluster)
     fstream data_base("CardClusters.db", ios::binary | ios::in | ios::out | ios::app);
     vector <Cluster> &findedClusters = findCluster.getFindedClusters();
     
-    cout << -1;
     loadFileSize(data_base);
-    cout << 0;
     SeekAndSetAllID(findCluster, data_base);
-    cout << "---";
 
     for (int i = 0; i < findCluster.getSize(); i++)
     {
         loadID(findedClusters[i], data_base);
-        cout << 1;
         loadSize(findedClusters[i], data_base);
-        cout << 2;
         loadCenter(findedClusters[i], data_base);
-        cout << 3;
         loadPointsFile(findedClusters[i], data_base);
-        cout << 4;
         loadFCID(findedClusters[i], data_base);
-        cout << 5;
     }
 
     data_base.close();  
@@ -446,9 +452,7 @@ void ClusterLoader::loadClusters(FindCluster &findCluster)
 void ClusterLoader::loadID(Cluster &findedCluster, fstream &data_base)
 {
     int ID = 0;
-    cout << ID;
     data_base >> ID;
-    cout << ID << endl;
     if (data_base.fail())
         cout << "bad knumber" << endl;
     findedCluster.setID(ID);
@@ -485,26 +489,19 @@ void ClusterLoader::loadPointsFile(Cluster &findedCluster, fstream &data_base)
     int OrderIndex;
 
     data_base >> filename;
-    cout << filename;
     if (data_base.fail())
         cout << "bad knumber" << endl;
-    cout << "tut" << endl;
     int savePos = data_base.tellp();
-    cout << "tut" << endl;
     data_base.close();
     fin.open(filename, ios::in | ios::binary);
-    cout << "tut" << endl;
     while(!fin.eof())
     {
         fin >> OrderIndex;
         findedCluster.add_p(OrderIndex);
     }
-    cout << 1;
     fin.clear();
     fin.close();
-    cout << "tut" << endl;
     data_base.open("CardClusters.db", ios::binary | ios::in | ios::out | ios::app);
-    cout << "tut" << endl;
     data_base.seekp(savePos, ios::beg);
 }
 

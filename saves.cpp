@@ -59,13 +59,14 @@ void Saves::saveFindCluster(vector <Cluster> clusters, int k, double r, int Fiel
 {
     vector <Cluster> &findedClusters = findClusters[size].getFindedClusters();
     int ClustersSize = clusters.size();
-    findedClusters = clusters;
+    findedClusters.resize(ClustersSize);
     
     for(int i = 0; i < ClustersSize; i++)
     {
-        Cluster & cluster = findedClusters[i];
+        Cluster & cluster = clusters[i];
         cluster.setID(i);
         cluster.setFCID(size);
+        findedClusters[i] = cluster;
     }
     
     findClusters[size].setName(name);

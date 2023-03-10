@@ -48,6 +48,7 @@ void calculate_clusters_center(vector <Cluster> &clusters, Field &field)
 
         center.setx(x);
         center.sety(y);
+        cout << "Calculated centers: " << x << " " << y << endl;
         cluster.setCenter(center);
         cluster.setSize(size);
         size = 0;
@@ -429,9 +430,9 @@ void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, in
 {
     FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
     Loader.loadFindCluster(findCluster, findClusterID, FieldID);
-    FindCluster testfindCluster = sv.getFindCluster(0);
-    findCluster.printParameters();
-    testfindCluster.printParameters();
+    //FindCluster testfindCluster = sv.getFindCluster(0);
+    //findCluster.printParameters();
+    //testfindCluster.printParameters();
 
     ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
     vector <Cluster> &findedClusters = findCluster.getFindedClusters();
@@ -439,8 +440,6 @@ void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, in
     for (int i = 0; i < ClusterSize; i++)
         findedClusters[i].reserve(fields[FieldID].size());
     CLoader.loadClusters(findCluster);
-
-    //calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
 }
 
 void Controller::calculate_center(Field &field)
@@ -464,5 +463,7 @@ void Controller::calculate_center(Field &field)
 void Controller::print_center(Field &field)
 {
     cout.setf(ios::left | ios::showpos);
-    cout << "Center is (" << setprecision(6) << field.center.getx() << " " << field.center.gety() << ")" << endl;
+    FindCluster findCluster = sv.getFindCluster(0);
+    calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
+    //cout << "Center is (" << setprecision(6) << field.center.getx() << " " << field.center.gety() << ")" << endl;
 }

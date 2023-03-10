@@ -27,16 +27,16 @@ class FLSettings
 
         void makeHeaderLine();
     public:
-        CLSettings()
+        FLSettings()
         {
             IDblock_width = 5;
             Nblock_width = 7;
             CXblock_width = 15;
             CYblock_width = 15;
-            EV1block_width = 21;
-            EV2block_width = 21;
-            EVblock_width = 21;
-            PFblock_width = 29;
+            EV1block_width = 23;
+            EV2block_width = 23;
+            EVblock_width = 23;
+            PFblock_width = 21;
 
             makeLine(IDblock, IDblock_width);
             makeLine(Nblock, Nblock_width);
@@ -133,18 +133,12 @@ class FindClusterLoader
 class FieldLoader
 {
     private:
-        string HEADER_LINE;
-        int HeaderLineSize;
-        int SizeLines;
+        FLSettings settings;
     public:
-        FieldLoader()
-        {
-            HEADER_LINE =    " ID    Size       Center_x        Center_y         Eigen_vec_1         Eigen_vec_2           Eigen_value        Points_file\n";
-            HeaderLineSize = HEADER_LINE.size();
-            SizeLines = 0;
-        }
+        FieldLoader(){}
         void printParametersInFieldFile(Field &field, fstream &data_base);
         void printHeaderLineFieldFile(fstream &data_base);
+        void loadID(Field &field, fstream &data_base);
         void loadSize(Field &field, fstream &data_base);
         void loadCenter(Field &field, fstream &data_base);
         void loadEigenVectors(Field &field, fstream &data_base);

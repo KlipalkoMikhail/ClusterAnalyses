@@ -29,6 +29,7 @@ class FindCluster
         void setKnumber(int k);
         void setRnumber(double r);
         void setName(std::string nm);
+        void printParameters();
 };
 
 #endif

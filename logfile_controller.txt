@@ -256,3 +256,154 @@ Cloud created CRCLOUD 250 1 1 1 1
 Factors calculated CALFACT 0
 Factors calculated CALFACT 0
 Field created PRFIELD 
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+KMEANS with3
+KMEANS with5
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+KMEANS with3
+KMEANS with5
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+KMEANS with3
+KMEANS with5
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+KMEANS with3
+KMEANS with5
+Factors calculated CALFACT 0
+Factors calculated CALFACT 1
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5
+KMEANS with3
+KMEANS with5

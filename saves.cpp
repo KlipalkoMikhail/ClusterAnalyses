@@ -52,20 +52,26 @@ int Saves::ncluster()
 Saves::Saves()
 {
     findClusters.resize(1000);
-    codes.resize(1000);
     size = 0;
 }
 
 void Saves::saveFindCluster(vector <Cluster> clusters, int k, double r, int FieldID, string name)
 {
     vector <Cluster> &findedClusters = findClusters[size].getFindedClusters();
-    int size = findedClusters.size();
+    int ClustersSize = clusters.size();
+    findedClusters = clusters;
     findClusters[size].setName(name);
+    cout << name << endl;
     findClusters[size].setID(size);
+    cout << size << endl;
     findClusters[size].setFieldID(FieldID);
+    cout << FieldID << endl;
     findClusters[size].setKnumber(k);
+    cout << k << endl;
     findClusters[size].setRnumber(r);
-    findClusters[size].setSize(size);
+    cout << r << endl;
+    findClusters[size].setSize(ClustersSize);
+    cout << ClustersSize << endl;
     size++;
 }
 

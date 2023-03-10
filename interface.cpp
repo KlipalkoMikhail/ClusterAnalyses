@@ -26,7 +26,7 @@ void Interface::request_is_help_string(string &message)
 
 void Interface::request_is_create_string(string &message)
 {
-    cout << "Enter the field index to add there a cloud and N, x, y, gx, gy: ";
+    cout << "Enter the field index to add there a cloud and N, x, y, gx, gy\n";
     cloud_parameters.load_index(cin);
     cloud_parameters.load_size(cin);
     cloud_parameters.load_center(cin);
@@ -47,10 +47,12 @@ void Interface::request_is_print_cloud(string &message)
     int field_index = 0;
     int cloud_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter cloud index (starts with 0): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter cloud index (starts with 0)\n";
     cin >> cloud_index;
+    cout << "Cloud index = " << cloud_index << endl;
 
     message = "PRCLOUD" + to_string(field_index) + to_string(cloud_index);
     controller.print_cloud(cloud_index, controller.fields[field_index]);
@@ -61,9 +63,9 @@ void Interface::request_is_print_field(string &message)
     int field_index = 0;
     message = "PRFIELD";
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Let's print the field..." << endl;
+    cout << "Field index = " << field_index << endl;
 
     controller.print_field(controller.fields[field_index]);
 }
@@ -73,10 +75,12 @@ void Interface::request_is_wave_string(string &message)
     int field_index = 0;
     double mode = 1;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter wave mode (starts with 0): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter wave mode (starts with 0)\n";
     cin >> mode;
+    cout << "Wave mode = " << mode << endl;
     message = "WAVE" + to_string(field_index) + to_string(mode);
 
     controller.wave(mode, controller.fields[field_index]);
@@ -88,12 +92,15 @@ void Interface::request_is_dbscan_string(string &message)
     int neighbors_number = 1;
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter number of neighbors: ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter number of neighbors\n";
     cin >> neighbors_number;
-    cout << "Enter step: ";
+    cout << "Neighbors number = " << neighbors_number << endl;
+    cout << "Enter step\n";
     cin >> step;
+    cout << "Step = " << step << endl;
 
     message = "DBSCAN" + to_string(neighbors_number) + to_string(step);
     controller.dbscan(neighbors_number, step, controller.fields[field_index]);
@@ -104,10 +111,12 @@ void Interface::request_is_kmeans_string(string &message)
     int cluster_number = 3;
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter number of clusters: ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter number of clusters\n";
     cin >> cluster_number;
+    cout << "Cluster number = " << cluster_number << endl;
 
     message = "KMEANS" + to_string(cluster_number);
     controller.k_means(cluster_number, controller.fields[field_index]);
@@ -118,10 +127,13 @@ void Interface::request_is_expmax_string(string &message)
     int field_index = 0;
     int cluster_number = 3;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter number of clusters: ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter number of clusters\n";
     cin >> cluster_number;
+    cout << "Cluster number = " << cluster_number << endl;
+
 
     message = "EXPMAX" + to_string(field_index) + to_string(cluster_number);
     controller.exp_max(cluster_number, controller.fields[field_index]);
@@ -173,8 +185,10 @@ void Interface::request_is_find_cluster(string &message)
 
     cout << "Enter field index (starts with 0): ";
     cin >> field_index;
+    cout << "Field index = " << field_index << endl;
     cout << "Enter algorithm index (starts with 0): ";
     cin >> algorithm_index;
+    cout << "Algorithm index = " << algorithm_index << endl;
 
     message = "RESULT" + to_string(field_index) + to_string(algorithm_index);
     controller.saveInFileFindCluster(algorithm_index, controller.fields[field_index]);
@@ -438,7 +452,8 @@ int Interface::Starts()
         return 0;
     } 
     else {
-        cout << "Unknown command. Try again!\n";
+        while (getchar() == 1);
+        //cout << "Unknown command. Try again!\n";
         return -1;
     }
     print_logs(message);

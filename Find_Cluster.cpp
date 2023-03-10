@@ -64,3 +64,14 @@ vector <Cluster> & FindCluster::getFindedClusters()
 {
     return findedClusters;
 }
+
+void FindCluster::printParameters()
+{
+    cout << "Parameters of FindClusters" << endl;
+    cout << "ID " << ID << endl;
+    cout << "FieldID " << FieldID << endl;
+    cout << "Name " << name << endl;
+    cout << "Size " << size << endl;
+    cout << "K " << Knumber << endl;
+    cout << "R " << Rnumber << endl;
+}

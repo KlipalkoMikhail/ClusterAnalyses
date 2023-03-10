@@ -136,6 +136,7 @@ void Controller::create_cloud(Cloud_parameters cloud_parameters)
 
     fields[cloud_parameters.field_index].state_gen(cloud_parameters);
     fields[cloud_parameters.field_index].ID = cloud_parameters.field_index;
+    fields[cloud_parameters.field_index].PrintPointsInFile();
 
     std::cout << "Cloud has been created with parameters: ";
     cloud_parameters.print_parameters(cout);
@@ -364,6 +365,9 @@ void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, in
 {
     FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
     Loader.loadFindCluster(findCluster, findClusterID, FieldID);
+        FindCluster testfindCluster = sv.getFindCluster(0);
+    findCluster.printParameters();
+    testfindCluster.printParameters();
 }
 
 void Controller::calculate_center(Field &field)

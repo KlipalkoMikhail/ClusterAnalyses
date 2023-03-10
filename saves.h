@@ -2,12 +2,12 @@
 #define SAVES_H
 #include "cluster.h"
 #include "Find_Cluster.h"
+
 class Saves
 {
     private:
         vector <FindCluster> findClusters;
         int size;
-        vector <int> codes;
         FindCluster FindClusterPtr;
     public:
         Saves();

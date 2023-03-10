@@ -59,13 +59,11 @@ void Field::state_gen(Cloud_parameters cloud_parameters)
     for (i = 0; i < N; i++)
         D[i].resize(0);
     state_work = 1;
-
-    PrintPointsInFile();
 }
 
 void Field::PrintPointsInFile()
 {
-    string filename = "MyPoint_" + ID;
+    string filename = "MyPoint_" + to_string(ID) + ".txt";
     ofstream PointFile(filename, ios::out | ios:: binary);
 
     for (int i = 0; i < N; i++)
@@ -75,7 +73,7 @@ void Field::PrintPointsInFile()
 
 int Field::file_save()
 {
-    std::ofstream fout("outfield.dat");
+    std::ofstream fout("outfield.dat", ios::out);
 
     for (int i = 0; i < N; i++)
         fout << points[i].getx() << "\t\t" << points[i].gety() << endl;

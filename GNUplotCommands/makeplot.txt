@@ -1,0 +1,7 @@
+set term png
+set output "graph.png"
+plot [-20:20][-20:20]\
+for [i = 0:2] "".i.".dat"\
+w p lt 7 lc i + 1
+unset output
+set term win

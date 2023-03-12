@@ -61,32 +61,28 @@ Controller::Controller()
 {
     Status_Work = 1;
     fields_size = 0;
+    logger.basicConfig("logfile_controller.txt");
 }
 
-Controller::~Controller()
-{
-    logfile_controller.close();
-}
-
-void Controller::print_logs(const string &LOG_MESSAGE)
-{
-    if(LOG_MESSAGE.size())
-        return;
-    
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << LOG_MESSAGE << endl;
-    logfile_controller.close();
-}
+Controller::~Controller(){}
 
 void Controller::k_means(int k, Field &field)
 {
     string name = "K-means";
-    vector <Cluster> findedClusters = exec.kmeans.k_means(k, field);
-    sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
-
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "KMEANS with" << k << endl;
-    logfile_controller.close();
+    try{
+        vector <Cluster> findedClusters = exec.kmeans.k_means(k, field);
+        sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
+        string message = "Kmeans is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        logger.info(message);
+    }
+    catch(std::exception& e)
+    {
+        string message = "Kmeans is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        std::cerr << e.what() << '\n';
+        logger.error(message);
+        message = e.what();
+        logger.error(message);
+    }
     
     Status_Work = 2;
 }
@@ -94,37 +90,63 @@ void Controller::k_means(int k, Field &field)
 void Controller::dbscan(int m , double r, Field &field)
 {
     string name = "DBscan";
-    vector <Cluster> findedClusters = exec.dbscan.dbscan(m, r, field);
-    sv.saveFindCluster(findedClusters, m, r, field.ID, name);
+    try
+    {
+        vector <Cluster> findedClusters = exec.dbscan.dbscan(m, r, field);
+        sv.saveFindCluster(findedClusters, m, r, field.ID, name);
+        string message = "dbscan is executed with parameters " + to_string(m) + " " + to_string(r) + " " + to_string(field.ID);
+        logger.info(message);
+    }
+    catch(std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        string message = "dbscan is executed with parameters " + to_string(m) + " " + to_string(r) + " " + to_string(field.ID);
+        logger.error(message);
+        message = e.what();
+        logger.error(message);
+    }
 
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "DBSCAN " << m << " " << r << " success" << endl;
-    logfile_controller.close();
     Status_Work = 2;
 }
 
 void Controller::wave(double mode, Field &field)
 {
     string name = "Wave";
-    vector <Cluster> findedClusters = exec.wave.wave(mode, field);
-    sv.saveFindCluster(findedClusters, 0, mode, field.ID, name);
-
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "WAVE " << mode << " success" << endl;
-    logfile_controller.close();
+    try{
+        vector <Cluster> findedClusters = exec.wave.wave(mode, field);
+        sv.saveFindCluster(findedClusters, 0, mode, field.ID, name);
+        string message = "wave is executed with parameters " + to_string(mode) + " " + to_string(field.ID);
+        logger.info(message);
+    }
+    catch(std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        string message = "wave is executed with parameters " + to_string(mode) + " " + to_string(field.ID);
+        logger.error(message);
+        message = e.what();
+        logger.error(message);
+    }
     Status_Work = 2;
 }
 
 void Controller::exp_max(int k, Field &field)
 {
     string name = "EM";
-    exec.em.turn_EM(k, field);
-    vector <Cluster> findedClusters = exec.em.get_storage().clusters;
-    sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
-
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "EXPMAX " << k << " success" << endl;
-    logfile_controller.close();
+    try{
+        exec.em.turn_EM(k, field);
+        vector <Cluster> findedClusters = exec.em.get_storage().clusters;
+        sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
+        string message = "expectation–maximization algorithm is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        logger.info(message);
+    }
+    catch(std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        string message = "expectation–maximization algorithm is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        logger.error(message);
+        message = e.what();
+        logger.error(message);
+    }
     Status_Work = 2;
 }
 
@@ -152,14 +174,13 @@ void Controller::print_field(Field &field)
     field.file_save();
 
     // сохраняем результаты в лог-файл контроллера
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "Field created PRFIELD " << endl;
-    logfile_controller.close();
+    string message = "print field is executed with parameters " + to_string(field.ID);
+    logger.info(message);
 }
 
-void Controller::create_cloud(Cloud_parameters cloud_parameters)
+void Controller::create_cloud(CloudParameters parameters)
 {
-    if (cloud_parameters.field_index > fields_size)
+    if (parameters.field_index > fields_size)
     {
         cout << "Put the index that lower then " << fields_size << endl;
         return;
@@ -171,15 +192,24 @@ void Controller::create_cloud(Cloud_parameters cloud_parameters)
         return;
     }
     
-    if (!fields[cloud_parameters.field_index].is_executed())
+    if (!fields[parameters.field_index].is_executed())
         fields_size++;
 
-    fields[cloud_parameters.field_index].state_gen(cloud_parameters);
-    fields[cloud_parameters.field_index].ID = cloud_parameters.field_index;
-    fields[cloud_parameters.field_index].PrintPointsInFile();
+    fields[parameters.field_index].state_gen(parameters);
+    fields[parameters.field_index].ID = parameters.field_index;
+    fields[parameters.field_index].PrintPointsInFile();
 
     std::cout << "Cloud has been created with parameters: ";
-    cloud_parameters.print_parameters(cout);
+    parameters.print_parameters(cout);
+
+    string message = "Requested create cloud with parameters " + to_string(parameters.size) + " " +   
+                                                                to_string(parameters.center_x) + " " + 
+                                                                to_string(parameters.center_y) + " " +
+                                                                to_string(parameters.dispersion_x) + " " + 
+                                                                to_string(parameters.dispersion_y) + " " +
+                                                                to_string(parameters.field_index);
+    
+    logger.info(message);
 }
 
 
@@ -225,9 +255,8 @@ void Controller::print_cloud(int i, Field &field)
     }
 
     // результаты отработки в лог-файл контроллера
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "Cloud printed PRCLOUD " << endl;
-    logfile_controller.close();
+    string message = "print cloud is executed with parameters " + to_string(i) + " " + to_string(field.ID);
+    logger.info(message);
 }
 
 void Controller::saveInFileFindCluster(int launchIndex, Field &field)
@@ -240,10 +269,11 @@ void Controller::saveInFileFindCluster(int launchIndex, Field &field)
 
     sv.saveResult(findCluster, field);
 
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller  << name << "done as " << launchIndex << "th algorithm with parameters k = " << Knumber << ", r = " << Rnumber << ", size = " << size << endl;
-    logfile_controller.close();
-
+    string message = "save find cluster result is executed with parameters " + to_string(launchIndex) + " " +   
+                                                                               to_string(field.ID);
+    logger.info(message);
+    message = "find clusted result saved with parameters " + to_string(launchIndex) + " " + name + " " + to_string(Knumber) + " " + to_string(Rnumber) + " " + to_string(size) + " " + to_string(field.ID);
+    logger.debug(message);
     cout << name << "done as " << launchIndex << "th algorithm with parameters k = " << Knumber << ", r = " << Rnumber << ", size = " << size << endl;
 }
 
@@ -265,9 +295,8 @@ void Controller::print_clouds(Field &field)
         for (int j = 0; j < clouds[k].size(); j++)
                 fout[i] << points[j].getx() << "\t\t" << points[j].gety() << endl;
     }
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "Clouds printed PRCLOUD " << endl;
-    logfile_controller.close();
+    string message = "print cloud is executed with parameters " + to_string(field.ID);
+    logger.info(message);
 }
 
 void Controller::calculate_factor(int k, Field &field)
@@ -304,9 +333,9 @@ void Controller::calculate_factor(int k, Field &field)
             clusters[i].factors = exec.factors.calculate_factors(cluster_points[i]);
         }
     }
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "Factors calculated CALFACT " << k << endl;
-    logfile_controller.close();
+    string message = "calculate factors is executed with parameters " + to_string(k) + " " +   
+                                                                        to_string(field.ID);
+    logger.info(message);
 }
 
 void Controller::print_factors(int m, Field &field)
@@ -366,10 +395,9 @@ void Controller::print_factors(int m, Field &field)
         fieldo << field.factors[0] + field.factors[4] << " , " << field.factors[1] + field.factors[5] << " front lw 4" << endl;
         fieldo.close();
     }
-    cout << "It is done" << endl;
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "Factors printed PRFACT " << endl;
-    logfile_controller.close();
+    string message = "print factors is executed with parameters " + to_string(m) + " " +   
+                                                                    to_string(field.ID);
+    logger.info(message);
 }
 
 void Controller::span_tree(Field &field)
@@ -378,21 +406,25 @@ void Controller::span_tree(Field &field)
     //sv.saveFindCluster(findedClusters, 0, 0, "SpanningTree");
     
     Status_Work = 2;
-    logfile_controller.open("logfile_controller.txt", ios::app);
-    logfile_controller << "Span tree SPANTREE " << endl;
-    logfile_controller.close();
+    string message = "spanning tree is executed with parameters " + to_string(field.ID);
+    logger.info(message);
+
 }
 
 void Controller::saveField(Field &field)
 {
     FieldLoader &Loader = DataBaseLoader.getFieldLoader();
     Loader.saveField(field);
+    string message = "save field is executed with parameters " + to_string(field.ID);
+    logger.info(message);
 }
 
 void Controller::loadField(Field &field, int id)
 {
     FieldLoader &Loader = DataBaseLoader.getFieldLoader();
     Loader.loadField(field, id);
+    string message = "load field is executed with parameters " + to_string(id);
+    logger.info(message);
 }
 
 void createClusterFiles(FindCluster &findCluster)
@@ -424,6 +456,8 @@ void Controller::saveFindCluster(FindCluster &findCluster)
     calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
     CLoader.saveClusters(findCluster);
     createClusterFiles(findCluster);
+    string message = "save find cluster is executed with parameters " + to_string(findCluster.getID());
+    logger.info(message);
 }
 
 void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
@@ -440,6 +474,9 @@ void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, in
     for (int i = 0; i < ClusterSize; i++)
         findedClusters[i].reserve(fields[FieldID].size());
     CLoader.loadClusters(findCluster);
+    string message = "load find cluster is executed with parameters " + to_string(findClusterID) + " " +   
+                                                                        to_string(FieldID);
+    logger.info(message);
 }
 
 void Controller::calculate_center(Field &field)
@@ -466,4 +503,6 @@ void Controller::print_center(Field &field)
     FindCluster findCluster = sv.getFindCluster(0);
     calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
     //cout << "Center is (" << setprecision(6) << field.center.getx() << " " << field.center.gety() << ")" << endl;
+    string message = "print center is executed with parameters " + to_string(field.ID);
+    logger.info(message);
 }

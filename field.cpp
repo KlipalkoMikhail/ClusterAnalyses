@@ -31,7 +31,7 @@ Cloud Field::get_copy_cloud(int k)
      return clouds[k];
 }
 
-void Field::state_gen(Cloud_parameters cloud_parameters)
+void Field::state_gen(CloudParameters cloud_parameters)
 {
     using namespace std;
     default_random_engine generator;

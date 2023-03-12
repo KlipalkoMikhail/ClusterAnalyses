@@ -38,7 +38,7 @@ class Field
     Point p(int k);
     vector <Point> p();
     vector <Point> & get_points_reference();
-    void state_gen(Cloud_parameters cloud_parameters);
+    void state_gen(CloudParameters parameters);
     void add_cloud(Cloud &cld);
     void PrintPointsInFile();
     Cloud & get_cloud(int k);

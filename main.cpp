@@ -1,17 +1,14 @@
-// 212 �������� ������ ����������
-// Clouds, K-means, Wave, DBscan, Spanning tree
+// 212 Клипалко Михаил Михайлович
+// ClusterAnalyses
 
 #include "headers.h"
 #include "interface.h"
 
 int main()
 {
-    // ������� ���������
-    Interface s;
+    Interface interface;
 
     std::cout << "Start! Enter HELP to see the list of available commands\n";
 
-    s.logfile_interface.open("logfile_interface.txt");
-    while (s.Starts());
-    s.logfile_interface.close();
+    while (interface.Starts());
 }

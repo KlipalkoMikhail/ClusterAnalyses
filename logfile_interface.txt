@@ -1,0 +1,4 @@
+Sun Mar 12 16:25:27 2023 INFO Requested create cloud with parameters 350 2.000000 2.000000 3.000000 1.000000 0
+Sun Mar 12 16:25:27 2023 INFO Requested k-means algorithm with parameters 0 3
+Sun Mar 12 16:25:27 2023 INFO Requested find cluster with parameters 0 0
+Sun Mar 12 16:25:27 2023 INFO Requested exit

@@ -7,22 +7,23 @@ Point::Point()
     NP = 0;
     colour = 0;
 }
-Point::~Point(){}
 
-Point::Point(double x1, double y1, int NP1, int colour1)
+Point::Point(const Point& point)
 {
-    x = x1;
-    y = y1;
-    NP = NP1;
-    colour = colour1;
+    x = point.getx();
+    y = point.gety();
+    NP = point.getNP();
+    colour = point.getColour();
 }
+
+Point::~Point(){}
 
 const Point & Point::operator=(const Point & point)
 {
     x = point.getx();
     y = point.gety();
     NP = point.getNP();
-    colour = point.getcolour();
+    colour = point.getColour();
     return *this;
 }
 
@@ -54,7 +55,7 @@ int Point::getNP() const
 {
     return NP;
 }
-int Point::getcolour() const
+int Point::getColour() const
 {
     return colour;
 }

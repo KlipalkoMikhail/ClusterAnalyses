@@ -2,25 +2,27 @@
 #define CLOUD_H
 using namespace std;
 #include "point.h"
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+using namespace std;
+
 class Cloud
 {
     private:
+        int N;                          
+        int NP;                         
+        vector <Point*> points;    
 
-        int N;                          // ���������� �����
-        int NP;                         // ����� ������
-        vector <Point*> points;         // ������ �����
-    
     public:
-
-        bool state_work;                // ��������� ������ ������
+        bool state_work;              
         Point center;    
         vector <double> factors;
         Cloud();
+        Cloud(const Cloud& cloud);
         int size() const;
         bool work() const;
         void set_par_to_p(Point *p, int k);
-        void create_space(int n, int np); // ������������
+        void create_space(int n, int np);
         double getx_p(int k);
         double gety_p(int k);
         int getnp_p(int k);
@@ -31,7 +33,7 @@ class Cloud
         void resize(int n);
         const Cloud & operator=(const Cloud & cloud);
         int get_np() const;
-        ~Cloud();                    // ����������
+        ~Cloud();                    
 };
 
 #endif

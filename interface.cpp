@@ -6,11 +6,11 @@
 #include "save_bd.h"
 #include "config.h"
 
-void Interface::request_is_help_string(string &message)
+void Interface::request_is_help_string()
 {
     string line;
     fstream fout("HELP.txt");
-    message = "HELP";
+    string message = "Requested help";
 
     if (fout.is_open())
     {
@@ -19,30 +19,36 @@ void Interface::request_is_help_string(string &message)
             getline(fout, line);
             cout << line << endl;
         }
+        logger.info(message);
     }
     else
+    {
         cout << "It seems the file HELP.TXT is not existed\n";
+        logger.error(message);
+    }
 }
 
-void Interface::request_is_create_string(string &message)
+void Interface::request_is_create_string()
 {
-    cout << "Enter the field index to add there a cloud and N, x, y, gx, gy\n";
-    cloud_parameters.load_index(cin);
-    cloud_parameters.load_size(cin);
-    cloud_parameters.load_center(cin);
-    cloud_parameters.load_dispersion(cin);
+    CloudParameters parameters;
+    cout << "To add cloud enter FID, N, x, y, gx, gy\n";
+    parameters.load_index(cin);
+    parameters.load_size(cin);
+    parameters.load_center(cin);
+    parameters.load_dispersion(cin);
 
-    message = "CRCLOUD" + to_string(cloud_parameters.size) +  
-                        to_string(cloud_parameters.center_x) + 
-                        to_string(cloud_parameters.center_y) +
-                        to_string(cloud_parameters.dispersion_x) + 
-                        to_string(cloud_parameters.dispersion_y) +
-                        to_string(cloud_parameters.field_index);
-
-    controller.create_cloud(cloud_parameters);
+    string message = "Requested create cloud with parameters " + to_string(parameters.size) + " " +   
+                                                                to_string(parameters.center_x) + " " + 
+                                                                to_string(parameters.center_y) + " " +
+                                                                to_string(parameters.dispersion_x) + " " + 
+                                                                to_string(parameters.dispersion_y) + " " +
+                                                                to_string(parameters.field_index);
+    
+    logger.info(message);
+    controller.create_cloud(parameters);
 }
 
-void Interface::request_is_print_cloud(string &message)
+void Interface::request_is_print_cloud()
 {
     int field_index = 0;
     int cloud_index = 0;
@@ -54,23 +60,25 @@ void Interface::request_is_print_cloud(string &message)
     cin >> cloud_index;
     cout << "Cloud index = " << cloud_index << endl;
 
-    message = "PRCLOUD" + to_string(field_index) + to_string(cloud_index);
+    string message = "Requested print cloud with parameters " + to_string(field_index) + " " + to_string(cloud_index);
+    logger.info(message);
     controller.print_cloud(cloud_index, controller.fields[field_index]);
 }
 
-void Interface::request_is_print_field(string &message)
+void Interface::request_is_print_field()
 {
     int field_index = 0;
-    message = "PRFIELD";
 
     cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
     cout << "Field index = " << field_index << endl;
 
+    string message = "Requested print field with parameters " + to_string(field_index);
+    logger.info(message);
     controller.print_field(controller.fields[field_index]);
 }
 
-void Interface::request_is_wave_string(string &message)
+void Interface::request_is_wave_string()
 {
     int field_index = 0;
     double mode = 1;
@@ -81,12 +89,13 @@ void Interface::request_is_wave_string(string &message)
     cout << "Enter wave mode (starts with 0)\n";
     cin >> mode;
     cout << "Wave mode = " << mode << endl;
-    message = "WAVE" + to_string(field_index) + to_string(mode);
 
+    string message = "Requested wave algorithm with parameters " + to_string(field_index) + " " + to_string(mode);
+    logger.info(message);
     controller.wave(mode, controller.fields[field_index]);
 }
 
-void Interface::request_is_dbscan_string(string &message)
+void Interface::request_is_dbscan_string()
 {
     double step = 1;
     int neighbors_number = 1;
@@ -102,11 +111,12 @@ void Interface::request_is_dbscan_string(string &message)
     cin >> step;
     cout << "Step = " << step << endl;
 
-    message = "DBSCAN" + to_string(neighbors_number) + to_string(step);
+    string message = "Requested dbscan algorithm with parameters " + to_string(field_index) + " " + to_string(neighbors_number) + " " + to_string(step);
+    logger.info(message);
     controller.dbscan(neighbors_number, step, controller.fields[field_index]);
 }
 
-void Interface::request_is_kmeans_string(string &message)
+void Interface::request_is_kmeans_string()
 {
     int cluster_number = 3;
     int field_index = 0;
@@ -118,11 +128,12 @@ void Interface::request_is_kmeans_string(string &message)
     cin >> cluster_number;
     cout << "Cluster number = " << cluster_number << endl;
 
-    message = "KMEANS" + to_string(cluster_number);
+    string message = "Requested k-means algorithm with parameters " + to_string(field_index) + " " + to_string(cluster_number);
+    logger.info(message);
     controller.k_means(cluster_number, controller.fields[field_index]);
 }
 
-void Interface::request_is_expmax_string(string &message)
+void Interface::request_is_expmax_string()
 {
     int field_index = 0;
     int cluster_number = 3;
@@ -135,320 +146,307 @@ void Interface::request_is_expmax_string(string &message)
     cout << "Cluster number = " << cluster_number << endl;
 
 
-    message = "EXPMAX" + to_string(field_index) + to_string(cluster_number);
+    string message = "Requested expectation–maximization algorithm with parameters " + to_string(field_index) + " " + to_string(cluster_number);
+    logger.info(message);
     controller.exp_max(cluster_number, controller.fields[field_index]);
 }
 
-void Interface::request_is_print_factors(string &message)
+void Interface::request_is_print_factors()
 {
     int field_index = 0;
     int code = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter code of object (0 - Field, 1 - Cloud, 2 - Cluster): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter code of object (0 - Field, 1 - Cloud, 2 - Cluster)\n";
     cin >> code;
+    cout << "Code = " << code << endl;
 
-    message = "PRFACT" + to_string(field_index) + to_string(code);
+    string message = "Requested print factors with parameters " + to_string(field_index) + " " + to_string(code);
+    logger.info(message);
     controller.print_factors(code, controller.fields[field_index]);
 }
 
-void Interface::request_is_calculate_factors(string &message)
+void Interface::request_is_calculate_factors()
 {
     int field_index = 0;
     int code = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter code of object (0 - Field, 1 - Cloud, 2 - Cluster): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter code of object (0 - Field, 1 - Cloud, 2 - Cluster)\n";
     cin >> code;
+    cout << "Code = " << code << endl;
 
-    message = "CALFACT" + to_string(field_index) + to_string(code);
+    string message = "Requested calculate factors with parameters " + to_string(field_index) + " " + to_string(code);
+    logger.info(message);
     controller.calculate_factor(code, controller.fields[field_index]);
 }
 
-void Interface::request_is_calculate_center(string &message)
+void Interface::request_is_calculate_center()
 {
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
+    cout << "Field index = " << field_index << endl;
 
-    message = "CALCEN" + to_string(field_index);
+    string message = "Requested calculate center with parameters " + to_string(field_index);
+    logger.info(message);
     controller.calculate_center(controller.fields[field_index]);
 }
 
-void Interface::request_is_find_cluster(string &message)
+void Interface::request_is_find_cluster()
 {
     int field_index = 0;
     int algorithm_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
     cout << "Field index = " << field_index << endl;
-    cout << "Enter algorithm index (starts with 0): ";
+    cout << "Enter algorithm index (starts with 0)\n";
     cin >> algorithm_index;
     cout << "Algorithm index = " << algorithm_index << endl;
 
-    message = "RESULT" + to_string(field_index) + to_string(algorithm_index);
+    string message = "Requested find cluster with parameters " + to_string(field_index) + " " + to_string(algorithm_index);
+    logger.info(message);
     controller.saveInFileFindCluster(algorithm_index, controller.fields[field_index]);
 }
 
-void Interface::request_is_print_center(string &message)
+void Interface::request_is_print_center()
 {
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
+    cout << "Field index = " << field_index << endl;
 
-    cout << "The printed center: ";
-    message = "PRCEN" + to_string(field_index);
+    string message = "Requested print center with parameters " + to_string(field_index);
+    logger.info(message);
     controller.print_center(controller.fields[field_index]);
 }
 
-void Interface::request_is_buffer_copy(string &message)
+void Interface::request_is_buffer_copy()
 {
     int field_index = 0;
     int cloud_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter cloud index (starts with 0): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter cloud index (starts with 0)\n";
     cin >> cloud_index;
+    cout << "Cloud index = " << cloud_index << endl;
 
-    message = "BUFFCPY" + to_string(field_index) + to_string(cloud_index);
+    string message = "Requested buffer copy with parameters " + to_string(field_index) + " " + to_string(cloud_index);
+    logger.info(message);
     controller.buffer.copy(controller.fields[field_index].get_cloud(cloud_index));
 }
 
-void Interface::request_is_buffer_past(string &message)
+void Interface::request_is_buffer_past()
 {
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
+    cout << "Field index = " << field_index << endl;
 
-    message = "BUFFPST" + to_string(field_index);
+    string message = "Requested buffer past with parameters " + to_string(field_index);
+    logger.info(message);
     controller.buffer.past(controller.fields[field_index]);
 }
 
-void Interface::request_is_buffer_move(string &message)
+void Interface::request_is_buffer_move()
 {
     double x = 1, y = 1;
     int field_index = 0;
     int cloud_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter cloud index (starts with 0): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter cloud index (starts with 0)\n";
     cin >> cloud_index;
-    cout << "Enter center: x and y (starts with 0): ";
+    cout << "Cloud index = " << cloud_index << endl;
+    cout << "Enter center: x and y (starts with 0)\n";
     cin >> x >> y;
+    cout << "x = " <<  x << " y = " << y << endl;
 
-    message = "BUFFMOV" + to_string(field_index) + to_string(cloud_index) + to_string(x) + to_string(y);
+    string message = "Requested buffer move with parameters " + to_string(field_index) + " " + to_string(cloud_index) + " " + to_string(x) + " " + to_string(y);
+    logger.info(message);
     controller.buffer.shift(controller.fields[field_index].get_cloud(cloud_index), x, y);
-    cout << "Shifted in " << " (" << x << " " << y << ")" << endl;
 }
 
-void Interface::request_is_buffer_rotate(string &message)
+void Interface::request_is_buffer_rotate()
 {
     double angle = 1;
     int field_index = 0;
     int cloud_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter cloud index (starts with 0): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter cloud index (starts with 0)\n";
     cin >> cloud_index;
-    cout << "Enter angle in radians (starts with 0): ";
+    cout << "Cloud index = " << cloud_index << endl;
+    cout << "Enter angle in radians (starts with 0)\n";
     cin >> angle;
+    cout << "Angle = " << angle << endl;
 
-    message = "BUFFROT" + to_string(field_index) + to_string(cloud_index) + to_string(angle);
+    string message = "Requested buffer rotate with parameters " + to_string(field_index) + " " + to_string(cloud_index) + " " + to_string(angle);
+    logger.info(message);
     controller.buffer.rotate(controller.fields[field_index].get_cloud(cloud_index), angle);
-    cout << "Rotate on " << angle << " radians\n";
 }
 
-void Interface::request_is_buffer_print(string &message)
+void Interface::request_is_buffer_print()
 {
-    message = "BUFFPRC";
+    string message = "Requested buffer print";
     controller.buffer.print();
 }
 
-void Interface::request_is_spanning_tree(string &message)
+void Interface::request_is_spanning_tree()
 {
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
+    cout << "Field index = " << field_index << endl;
 
-    message = "SPANTRE" + to_string(field_index);
+    string message = "Requested spanning tree algorithm with parameters " + to_string(field_index);
+    logger.info(message);
     controller.span_tree(controller.fields[field_index]);
 }
 
-void Interface::request_is_save_field(string &message)
+void Interface::request_is_save_field()
 {
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
+    cout << "Field index = " << field_index << endl;
 
-    message = "SAVEDB" + to_string(field_index);
+    string message = "Requested save field with parameters " + to_string(field_index);
+    logger.info(message);
     controller.saveField(controller.fields[field_index]);
 }
 
-void Interface::request_is_load_field(string &message)
+void Interface::request_is_load_field()
 {
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
+    cout << "Field index = " << field_index << endl;
 
-    message = "LOADDB" + to_string(field_index);
+    string message = "Requested load field with parameters " + to_string(field_index);
+    logger.info(message);
     controller.loadField(controller.fields[field_index], field_index);
-    cout << "Data is loaded" << endl;
 }
 
-void Interface::request_is_load_find_cluster(string &message)
+void Interface::request_is_load_find_cluster()
 {
     int field_index = 0;
     int findClusterIndex = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter findcluster index (starts with 0): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter findcluster index (starts with 0)\n";
     cin >> findClusterIndex;
+    cout << "findcluster index = " << findClusterIndex << endl;
 
-    message = "LOADDB" + to_string(field_index);
+    string message = "Requested load find cluster with parameters " + to_string(field_index) + " " + to_string(findClusterIndex);
+    logger.info(message);
     controller.loadFindCluster(controller.sv.getFindCluster(findClusterIndex), findClusterIndex, field_index);
-    cout << "Data is loaded" << endl;
 }
 
-void Interface::request_is_save_find_cluster(string &message)
+void Interface::request_is_save_find_cluster()
 {
     int field_index = 0;
     int findClusterIndex = 0;
 
-    cout << "Enter field index (starts with 0): ";
+    cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
-    cout << "Enter findcluster index (starts with 0): ";
+    cout << "Field index = " << field_index << endl;
+    cout << "Enter findcluster index (starts with 0)\n";
     cin >> findClusterIndex;
+    cout << "findcluster index = " << findClusterIndex << endl;
 
-    message = "LOADDB" + to_string(field_index);
+    string message = "Requested save find cluster with parameters " + to_string(field_index) + " " + to_string(findClusterIndex);
+    logger.info(message);
     controller.saveFindCluster(controller.sv.getFindCluster(findClusterIndex));
-    cout << "Data is loaded" << endl;
 }
 
-void Interface::request_is_exit_string(string &message)
+void Interface::request_is_exit_string()
 {
-    message = "EXIT";
+    string message = "Requested exit";
+    logger.info(message);
 }
-
-void Interface::print_logs(const string &LOG_MESSAGE)
-{
-    if (LOG_MESSAGE.size())
-        return;
-    logfile_interface.open("logfile_interface.txt", std::ios::app);
-    logfile_interface << LOG_MESSAGE << endl;
-    logfile_interface.close();
-}
-
 
 Interface::Interface()
 {
-    ofstream logfile_interface;
-    Field field();
+    logger.basicConfig("logfile_interface.txt");
 }
 
-Interface::~Interface()
-{
-    logfile_interface.close();
-}
-
-class Commands
-{
-public:
-    string CLOUD_CREATE = "CRCLOUD";
-    string CLOUD_PRINT = "PRCLOUD";
-    string FIELD_PRINT = "PRFIELD";
-    string WAVE = "WAVE";
-    string DBSCAN = "DBSCAN";
-    string K_MEANS = "KMEANS";
-    string EXP_MAX = "EXPMAX";
-    string FACT_PRINT = "PRFACT";
-    string FACT_CALC = "CALFACT";
-    string CENT_CALC = "CALCEN";
-    string RESULT = "RESULT";
-    string CENT_PRINT = "PRCEN";
-    string COPY_BUFF = "BUFFCPY";
-    string PAST_BUFF = "BUFFPST";
-    string MOVE_BUFF = "BUFFMOV";
-    string ROTATE_BUFF = "BUFFROT";
-    string PRINT_BUFF = "BUFFPRC";
-    string SPAN_TREE = "SPANTRE";
-    string SAVE_FIELD = "SAVE_FIELD";
-    string LOAD_FIELD = "LOAD_FIELD";
-    string SAVE_FINDC = "SAVE_FINDC";
-    string LOAD_FINDC = "LOAD_FINDC";
-    string EXIT = "EXIT";
-    string HELP = "HELP";
-};
-
+Interface::~Interface(){}
 
 int Interface::Starts()
 {
-    Commands commands;
+    Commands commands = settings.getCommands();
     string request;
-    string message;
 
     cin >> request;
     if (request == commands.HELP)
-        request_is_help_string(message);
+        request_is_help_string();
     if (request == commands.CLOUD_CREATE)
-        request_is_create_string(message);
+        request_is_create_string();
     if (request == commands.CLOUD_PRINT)
-        request_is_print_cloud(message);
+        request_is_print_cloud();
     if (request == commands.FIELD_PRINT)
-        request_is_print_field(message);
+        request_is_print_field();
     if (request == commands.WAVE)
-        request_is_wave_string(message);
+        request_is_wave_string();
     if (request == commands.DBSCAN)
-        request_is_dbscan_string(message);
+        request_is_dbscan_string();
     if (request == commands.K_MEANS)
-        request_is_kmeans_string(message);
+        request_is_kmeans_string();
     if (request == commands.EXP_MAX)
-        request_is_expmax_string(message);
+        request_is_expmax_string();
     if (request == commands.FACT_PRINT)
-        request_is_print_factors(message);
+        request_is_print_factors();
     if (request == commands.FACT_CALC)
-        request_is_calculate_factors(message);
+        request_is_calculate_factors();
     if (request == commands.CENT_CALC)
-        request_is_calculate_center(message);
+        request_is_calculate_center();
     if (request == commands.RESULT)
-        request_is_find_cluster(message);
+        request_is_find_cluster();
     if (request == commands.CENT_PRINT)
-        request_is_print_center(message);
+        request_is_print_center();
     if (request == commands.COPY_BUFF)
-        request_is_buffer_copy(message);
+        request_is_buffer_copy();
     if (request == commands.PAST_BUFF)
-        request_is_buffer_past(message);
+        request_is_buffer_past();
     if (request == commands.MOVE_BUFF)
-        request_is_buffer_move(message);
+        request_is_buffer_move();
     if (request == commands.ROTATE_BUFF)
-        request_is_buffer_rotate(message);
+        request_is_buffer_rotate();
     if (request == commands.PRINT_BUFF)
-        request_is_buffer_print(message);
+        request_is_buffer_print();
     if (request == commands.SPAN_TREE)
-        request_is_spanning_tree(message);
+        request_is_spanning_tree();
     if (request == commands.SAVE_FIELD)
-        request_is_save_field(message);
+        request_is_save_field();
     if (request == commands.LOAD_FIELD)
-        request_is_load_field(message);
+        request_is_load_field();
     if (request == commands.SAVE_FINDC)
-        request_is_save_find_cluster(message);
+        request_is_save_find_cluster();
     if (request == commands.LOAD_FINDC)
-        request_is_load_find_cluster(message);
+        request_is_load_find_cluster();
     if (request == commands.EXIT)
     {
-        request_is_exit_string(message);
+        request_is_exit_string();
         return 0;
     } 
     else {
@@ -456,6 +454,6 @@ int Interface::Starts()
         //cout << "Unknown command. Try again!\n";
         return -1;
     }
-    print_logs(message);
+
     return 1;
 }

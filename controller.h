@@ -1,6 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 #include "field.h"
+#include "Logger.h"
 #include "saves.h"
 #include "buffer.h"
 #include "exec.h"
@@ -18,13 +19,13 @@ class Controller
         Saves sv;
         Loader DataBaseLoader;
         Config config;
-        ofstream logfile_controller;
+        Logger logger;
         int fields_size;
 
         Controller();
         void print_field(Field &field);
         void k_means(int k, Field &field);
-        void create_cloud(Cloud_parameters cloud_parameters);
+        void create_cloud(CloudParameters cloud_parameters);
         void saveInFileFindCluster(int launchIndex, Field &field);
         void wave(double mode, Field &field);
         void dbscan(int m, double r, Field &field);

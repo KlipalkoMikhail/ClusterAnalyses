@@ -13,13 +13,36 @@ int Cloud::get_np() const
     return NP;
 }
 
+Cloud::Cloud(const Cloud& cloud)
+{
+    try{
+    N = cloud.size();
+    NP = cloud.get_np();
+    points.clear();
+    points.resize(N);
+    vector <Point> points_of_cloud = cloud.get_points();
+    for (size_t i; i < points.size(); i++)
+    {
+        points[i] = new Point;
+        (*points[i]).setx(points_of_cloud[i].getx());
+        (*points[i]).sety(points_of_cloud[i].gety());
+        (*points[i]).setnp(points_of_cloud[i].getNP());
+        (*points[i]).setc(points_of_cloud[i].getColour());
+    }
+    }
+    catch (std::bad_alloc &e)
+    {
+        throw new MyException(EC_MEMORY, "Cannot get memory\n");
+    }    
+}
+
 const Cloud & Cloud::operator=(const Cloud & cloud)
 {
     try{
         N = cloud.size();
         NP = cloud.get_np();
         points.clear();
-        resize(N);
+        points.resize(N);
         vector <Point> points_of_cloud = cloud.get_points();
         state_work = cloud.state_work;
         center = cloud.center;

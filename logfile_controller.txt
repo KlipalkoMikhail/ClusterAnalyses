@@ -1,12 +1,4 @@
-KMEANS with3
-WAVE 3 success
-Factors calculated CALFACT 0
-Factors calculated CALFACT 0
-KMEANS with3
-WAVE 3 success
-Factors calculated CALFACT 0
-Factors calculated CALFACT 0
-KMEANS with3
-K-meansdone as 0th algorithm with parameters k = 3, r = 0, size = 3
-KMEANS with3
-K-meansdone as 0th algorithm with parameters k = 3, r = 0, size = 3
+Sun Mar 12 16:25:27 2023 INFO Requested create cloud with parameters 350 2.000000 2.000000 3.000000 1.000000 0
+Sun Mar 12 16:25:27 2023 INFO Kmeans is executed with parameters 3 0
+Sun Mar 12 16:25:27 2023 INFO save find cluster result is executed with parameters 0 0
+Sun Mar 12 16:25:27 2023 DEBUG find clusted result saved with parameters 0 K-means 3 0.000000 3 0

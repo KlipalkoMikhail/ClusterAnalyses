@@ -1,5 +1,6 @@
 #include "headers.h"
 #include "cluster.h"
+#include <cfloat>
 #include "point.h"
 #include <list>
 #include "span_tree.h"

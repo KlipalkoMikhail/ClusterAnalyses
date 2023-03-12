@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-class Cloud_parameters
+class CloudParameters
 {
     public:
         int field_index;
@@ -13,7 +13,7 @@ class Cloud_parameters
         double dispersion_x;
         double dispersion_y;
 
-        Cloud_parameters()
+        CloudParameters()
         {
             field_index = 0;
             size = 100;
@@ -27,7 +27,7 @@ class Cloud_parameters
         void load_center(istream & stream);
         void load_dispersion(istream & stream);
         void print_parameters(ostream & stream);
-        ~Cloud_parameters(){}
+        ~CloudParameters(){}
 };
 
 #endif

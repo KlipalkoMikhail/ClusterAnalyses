@@ -1,7 +1,7 @@
 #include "headers.h"
 #include "cloud_parameters.h"
 
-void Cloud_parameters::load_index(istream &stream)
+void CloudParameters::load_index(istream &stream)
 {
     int i = 0;
     stream >> i;
@@ -12,7 +12,7 @@ void Cloud_parameters::load_index(istream &stream)
         field_index = i;
 }
 
-void Cloud_parameters::load_size(istream &stream)
+void CloudParameters::load_size(istream &stream)
 {
     int s = 0;
     stream >> s;
@@ -23,7 +23,7 @@ void Cloud_parameters::load_size(istream &stream)
         size = s;
 }
 
-void Cloud_parameters::load_center(istream &stream)
+void CloudParameters::load_center(istream &stream)
 {
     double x, y;
     stream >> x;
@@ -41,7 +41,7 @@ void Cloud_parameters::load_center(istream &stream)
         center_y = y;
 }
 
-void Cloud_parameters::load_dispersion(istream &stream)
+void CloudParameters::load_dispersion(istream &stream)
 {
     double gx, gy;
     stream >> gx;
@@ -59,7 +59,7 @@ void Cloud_parameters::load_dispersion(istream &stream)
         dispersion_y = gy;
 }
 
-void Cloud_parameters::print_parameters(ostream &stream)
+void CloudParameters::print_parameters(ostream &stream)
 {
     stream.setf(ios::left);
     stream << size << '\t' << center_x << '\t' << center_y << '\t' << dispersion_x << '\t' << dispersion_y << endl;

@@ -4,44 +4,89 @@
 #include <iostream>
 #include <string>
 #include "cloud_parameters.h"
+#include "Logger.h"
 using namespace std;
+
+class Commands
+{
+public:
+    string CLOUD_CREATE = "CRCLOUD";
+    string CLOUD_PRINT = "PRCLOUD";
+    string FIELD_PRINT = "PRFIELD";
+    string WAVE = "WAVE";
+    string DBSCAN = "DBSCAN";
+    string K_MEANS = "KMEANS";
+    string EXP_MAX = "EXPMAX";
+    string FACT_PRINT = "PRFACT";
+    string FACT_CALC = "CALFACT";
+    string CENT_CALC = "CALCEN";
+    string RESULT = "RESULT";
+    string CENT_PRINT = "PRCEN";
+    string COPY_BUFF = "BUFFCPY";
+    string PAST_BUFF = "BUFFPST";
+    string MOVE_BUFF = "BUFFMOV";
+    string ROTATE_BUFF = "BUFFROT";
+    string PRINT_BUFF = "BUFFPRC";
+    string SPAN_TREE = "SPANTRE";
+    string SAVE_FIELD = "SAVE_FIELD";
+    string LOAD_FIELD = "LOAD_FIELD";
+    string SAVE_FINDC = "SAVE_FINDC";
+    string LOAD_FINDC = "LOAD_FINDC";
+    string EXIT = "EXIT";
+    string HELP = "HELP";
+};
+
+class InterfaceSettings
+{
+    private:
+        CloudParameters cloudParameters;
+        Commands commands;
+    public:
+        CloudParameters getCloudParameters()
+        {
+            return cloudParameters;
+        }
+        Commands getCommands()
+        {
+            return commands;
+        }
+};
 
 class Interface
 {
-    public:
-    Cloud_parameters cloud_parameters;
-    ofstream logfile_interface;
-    Controller controller;
+    private:
+        InterfaceSettings settings;
+        Logger logger;
+        Controller controller;
 
-    Interface();
-    int Starts();
-    void request_is_help_string(string &message);
-    void request_is_create_string(string &message);
-    void request_is_print_cloud(string &message);
-    void request_is_print_field(string &message);
-    void request_is_print_factors(string &message);
-    void request_is_print_center(string &message);
-    void request_is_dbscan_string(string &message);
-    void request_is_kmeans_string(string &message);
-    void request_is_expmax_string(string &message);
-    void request_is_wave_string(string &message);
-    void request_is_calculate_factors(string &message);
-    void request_is_calculate_center(string &message);
-    void request_is_find_cluster(string &message);
-    void request_is_buffer_copy(string &message);
-    void request_is_buffer_past(string &message);
-    void request_is_buffer_move(string &message);
-    void request_is_buffer_rotate(string &message);
-    void request_is_buffer_print(string &message);
-    void request_is_spanning_tree(string &message);
-    void request_is_save_field(string &message);
-    void request_is_load_field(string &message);
-    void request_is_load_find_cluster(string &message);
-    void request_is_save_find_cluster(string &message);
-    void request_is_exit_string(string &message);
-    
-    void print_logs(const string &LOG_MESSAGE);
-    ~Interface();
+    public:
+        Interface();
+        int Starts();
+        void request_is_help_string();
+        void request_is_create_string();
+        void request_is_print_cloud();
+        void request_is_print_field();
+        void request_is_print_factors();
+        void request_is_print_center();
+        void request_is_dbscan_string();
+        void request_is_kmeans_string();
+        void request_is_expmax_string();
+        void request_is_wave_string();
+        void request_is_calculate_factors();
+        void request_is_calculate_center();
+        void request_is_find_cluster();
+        void request_is_buffer_copy();
+        void request_is_buffer_past();
+        void request_is_buffer_move();
+        void request_is_buffer_rotate();
+        void request_is_buffer_print();
+        void request_is_spanning_tree();
+        void request_is_save_field();
+        void request_is_load_field();
+        void request_is_load_find_cluster();
+        void request_is_save_find_cluster();
+        void request_is_exit_string();
+        ~Interface();
 
 };
 

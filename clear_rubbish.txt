@@ -1,0 +1,2 @@
+all:
+    rm GnuFile*, OutPut*, ClusterPoints*, gnu_*, OutField*

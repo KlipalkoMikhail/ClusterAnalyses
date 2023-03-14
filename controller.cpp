@@ -12,6 +12,8 @@
 #include <cmath>
 #define EPSILON 0.000001
 
+void printFieldParam(Field &field);
+
 double distance(const Point &x, const Point &y)
 {
     return sqrt((x.getx() - y.getx())*(x.getx()- y.getx()) + (x.gety() - y.gety())*(x.gety() - y.gety()));
@@ -133,11 +135,13 @@ void Controller::exp_max(int k, Field &field)
 {
     string name = "EM";
     try{
-        exec.em.turn_EM(k, field);
-        vector <Cluster> findedClusters = exec.em.get_storage().clusters;
+        vector <Cluster> findedClusters = exec.em.turn_EM(k, field);
         sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
+        cout << "tut";
         string message = "expectation–maximization algorithm is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        cout << "before";
         logger.info(message);
+        cout << "fag";
     }
     catch(std::exception& e)
     {
@@ -165,8 +169,8 @@ void Controller::print_field(Field &field)
         cout << " X " << "\t\t\t" << " Y " << endl;
         for (int i = 0; i < field.size(); i++)
         {
-            cout << field.getx_p(i) << "\t\t";
-            cout << field.gety_p(i) << endl;
+            //cout << field.getx_p(i) << "\t\t";
+            //cout << field.gety_p(i) << endl;
         }
     }
 
@@ -186,18 +190,12 @@ void Controller::create_cloud(CloudParameters parameters)
         return;
     }
     
-    if (Status_Work == 2)
-    {
-        cout << "You have done some of algorithm. Add more cloud is not allowed!" << endl;
-        return;
-    }
-    
     if (!fields[parameters.field_index].is_executed())
         fields_size++;
 
     fields[parameters.field_index].state_gen(parameters);
     fields[parameters.field_index].ID = parameters.field_index;
-    fields[parameters.field_index].PrintPointsInFile();
+    //fields[parameters.field_index].PrintPointsInFile();
 
     std::cout << "Cloud has been created with parameters: ";
     parameters.print_parameters(cout);
@@ -421,10 +419,18 @@ void Controller::saveField(Field &field)
 
 void Controller::loadField(Field &field, int id)
 {
-    FieldLoader &Loader = DataBaseLoader.getFieldLoader();
-    Loader.loadField(field, id);
-    string message = "load field is executed with parameters " + to_string(id);
-    logger.info(message);
+    try{
+        FieldLoader &Loader = DataBaseLoader.getFieldLoader();
+        Loader.loadField(field, id);
+        //printFieldParam(field);
+        string message = "load field is executed with parameters " + to_string(id);
+        logger.info(message);
+    }
+    catch(MyException &ex)
+    {
+        string message = ex.getMessage();
+        logger.error(message);
+    }
 }
 
 void createClusterFiles(FindCluster &findCluster)
@@ -447,36 +453,55 @@ void createClusterFiles(FindCluster &findCluster)
         fout.close();
     }
 }
-
 void Controller::saveFindCluster(FindCluster &findCluster)
 {
-    FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
-    Loader.saveFindCluster(findCluster);
-    ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
-    calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
-    CLoader.saveClusters(findCluster);
-    createClusterFiles(findCluster);
-    string message = "save find cluster is executed with parameters " + to_string(findCluster.getID());
-    logger.info(message);
+    try{
+        FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
+        int FID = findCluster.getFieldID();
+        if(!fields[FID].is_saved())
+        {
+            throw MyException("Field " + to_string(FID) + " is not saved");
+        }
+        Loader.saveFindCluster(findCluster);
+        ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
+        calculate_clusters_center(findCluster.getFindedClusters(), fields[FID]);
+        CLoader.saveClusters(findCluster);
+        createClusterFiles(findCluster);
+        string message = "save find cluster is executed with parameters " + to_string(FID);
+        logger.info(message);
+    }
+    catch(MyException &ex)
+    {
+        string message = ex.getMessage();
+        logger.error(message);
+    }
 }
 
 void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
 {
-    FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
-    Loader.loadFindCluster(findCluster, findClusterID, FieldID);
-    //FindCluster testfindCluster = sv.getFindCluster(0);
-    //findCluster.printParameters();
-    //testfindCluster.printParameters();
+    try{
+        FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
+        Loader.loadFindCluster(findCluster, findClusterID, FieldID);
+        //FindCluster testfindCluster = sv.getFindCluster(0);
+        //findCluster.printParameters();
+        //testfindCluster.printParameters();
 
-    ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
-    vector <Cluster> &findedClusters = findCluster.getFindedClusters();
-    int ClusterSize = findCluster.getSize();
-    for (int i = 0; i < ClusterSize; i++)
-        findedClusters[i].reserve(fields[FieldID].size());
-    CLoader.loadClusters(findCluster);
-    string message = "load find cluster is executed with parameters " + to_string(findClusterID) + " " +   
+        ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
+        vector <Cluster> &findedClusters = findCluster.getFindedClusters();
+        int ClusterSize = findCluster.getSize();
+        for (int i = 0; i < ClusterSize; i++)
+            findedClusters[i].reserve(fields[FieldID].size());
+        CLoader.loadClusters(findCluster);
+
+        string message = "load find cluster is executed with parameters " + to_string(findClusterID) + " " +   
                                                                         to_string(FieldID);
-    logger.info(message);
+        logger.info(message);
+    }
+    catch(MyException& ex)
+    {
+        string message = ex.getMessage();
+        logger.error(message);
+    }
 }
 
 void Controller::calculate_center(Field &field)
@@ -495,14 +520,17 @@ void Controller::calculate_center(Field &field)
     sum_y = sum_y / field_size;
     field.center.setx(sum_x);
     field.center.sety(sum_y);
+
+    string message = "calculated center with parameters " + to_string(field.ID);
+    logger.info(message);
 }
 
 void Controller::print_center(Field &field)
 {
     cout.setf(ios::left | ios::showpos);
-    FindCluster findCluster = sv.getFindCluster(0);
-    calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
-    //cout << "Center is (" << setprecision(6) << field.center.getx() << " " << field.center.gety() << ")" << endl;
+    //FindCluster findCluster = sv.getFindCluster(0);
+    //calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
+    cout << "Center is (" << setprecision(6) << field.center.getx() << " " << field.center.gety() << ")" << endl;
     string message = "print center is executed with parameters " + to_string(field.ID);
     logger.info(message);
 }

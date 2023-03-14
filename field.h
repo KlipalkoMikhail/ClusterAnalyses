@@ -11,6 +11,7 @@ class Field
     private:
         
     bool state_work;
+    bool isSaved;
     int N;
     int NCL;
     vector <Cloud> clouds;
@@ -20,6 +21,7 @@ class Field
     Point point_fictive_ptr;                // фиктивный указатель
     
     public:
+
     Point center;                           // центр поля
     vector <double> factors;
     int ID;
@@ -41,6 +43,8 @@ class Field
     void state_gen(CloudParameters parameters);
     void add_cloud(Cloud &cld);
     void PrintPointsInFile();
+    bool is_saved();
+    
     Cloud & get_cloud(int k);
     Cloud get_copy_cloud(int k);
     ~Field();

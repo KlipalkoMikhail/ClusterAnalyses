@@ -20,6 +20,7 @@ Field::Field()
     state_work = 0;
     N = 0;
     NCL = 0;
+    isSaved = 0;
     clouds.resize(100);
     points.resize(10000);
     factors.resize(6);
@@ -29,6 +30,11 @@ Field::Field()
 Cloud Field::get_copy_cloud(int k)
 {
      return clouds[k];
+}
+
+bool Field::is_saved()
+{
+    return isSaved;
 }
 
 void Field::state_gen(CloudParameters cloud_parameters)
@@ -67,13 +73,14 @@ void Field::PrintPointsInFile()
     ofstream PointFile(filename, ios::out | ios:: binary);
 
     for (int i = 0; i < N; i++)
-        PointFile << points[i].getNP() << " " << points[i].getx() << " " << points[i].gety() << " ";
+        PointFile << points[i].getNP() << " " << points[i].getx() << " " << points[i].gety() << endl;
     PointFile.close();
 }
 
 int Field::file_save()
 {
-    std::ofstream fout("outfield.dat", ios::out);
+    string filename = "OutField_" + to_string(ID) + ".txt";
+    std::ofstream fout(filename, ios::out);
 
     for (int i = 0; i < N; i++)
         fout << points[i].getx() << "\t\t" << points[i].gety() << endl;

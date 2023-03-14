@@ -1,5 +1,5 @@
 all:
-	g++ span_tree.cpp cloud.cpp cluster.cpp save_bd.cpp controller.cpp cloud_parameters.cpp field.cpp main.cpp interface.cpp point.cpp functions.cpp saves.cpp buffer.cpp Kmeans_alg.cpp storage.cpp Dbscan_alg.cpp EM_alg.cpp Wave_alg.cpp Find_Cluster.cpp Logger.cpp factors.cpp config.cpp -o2 -Wall -Wdouble-promotion -Wstrict-aliasing=1 -Wno-div-by-zero -Wformat-overflow -pedantic-errors -o program
+	g++ span_tree.cpp cloud.cpp cluster.cpp save_bd.cpp controller.cpp cloud_parameters.cpp field.cpp main.cpp interface.cpp point.cpp functions.cpp saves.cpp buffer.cpp Kmeans_alg.cpp Dbscan_alg.cpp EM_alg.cpp Wave_alg.cpp Find_Cluster.cpp Logger.cpp factors.cpp config.cpp -o2 -Wall -Wdouble-promotion -Wstrict-aliasing=1 -Wno-div-by-zero -Wformat-overflow -pedantic-errors -o program
 program.o: cloud.o cluster.o controller.o field.o main.o interface.o point.o saves.o 
 	g++ cloud.o cluster.o controller.o field.o main.o interface.o point.o saves.o -c
 command:

@@ -62,6 +62,7 @@ void FieldLoader::saveField(Field &field)
 {
     fstream CardField("CardField.db", ios::binary | ios::app | ios::in | ios::out);
 
+    field.PrintPointsInFile();
     printHeaderLineFieldFile(CardField);
     printParametersInFieldFile(field, CardField);
 
@@ -135,6 +136,7 @@ void FieldLoader::loadPointsFile(Field &field, fstream &data_base)
         i++;
     }
     points_file.close();
+    cout << filename << endl;
 }
 
 void FieldLoader::setFlags(Field &field, int index)
@@ -165,18 +167,58 @@ void FieldLoader::loadID(Field &field, fstream &data_base)
     }
 }
 
+void printFieldParam(Field &field)
+{
+    //vector <Point> &points = field.get_points_reference();
+    cout << "param " << endl;
+    cout << "FID = " << field.ID << endl;
+    cout << "CENTER = " << field.center.getx() << " " << field.center.gety() << endl;
+    //for (int i = 0; i < field.size(); i++)
+     //   cout << setw(14) << points[i].getx() << " " << points[i].gety() << endl;
+    cout << field.ID << endl;
+}
+
 void FieldLoader::loadField(Field &field, int id)
 {
     fstream CardField("CardField.db", ios::binary | ios::in);
-    
+    if (!CardField.is_open())
+    {
+        cout << "File is not existed\n";
+        throw MyException("file is not existed");
+    }
+    loadFileSize(CardField);
+
+    if (id > SizeLines - 1)
+    {
+        cout << "Wrong ID" << endl;
+        throw MyException("Field with this ID is not existed");
+    }
+
     setFlags(field, id);
     loadID(field, CardField);
     loadSize(field, CardField);
     loadCenter(field, CardField);
     loadEigenVectors(field, CardField);    
     loadPointsFile(field, CardField);
-
+    //printFieldParam(field);
     CardField.close();  
+}
+
+void FieldLoader::loadFileSize(fstream & data_base)
+{
+    char testAlpha;
+    int HeaderLineSize = settings.getHEADER_LINE_SIZE();
+    cout << HeaderLineSize << endl;
+    int lineSize = 1;
+    while (!data_base.eof())
+    {
+        data_base.seekg(HeaderLineSize*lineSize, ios::beg);
+        data_base >> testAlpha;
+        if (data_base.fail()) break;
+        lineSize++;
+    }
+    SizeLines = lineSize;
+    data_base.clear();
 }
 
 void FindClusterLoader::printHeaderLineInFile(fstream &data_base)
@@ -196,43 +238,53 @@ void FindClusterLoader::printHeaderLineInFile(fstream &data_base)
     data_base.clear();
 }
 
-bool FindClusterLoader::isFalseIndex(int FindClusterID)
+void check_next(fstream &data_base)
 {
-    if (FindClusterID >= SizeLines)
+    char c;
+    while (!data_base.eof())
     {
-        cout << "Index out of range\n";
-        return 0;
+        data_base >> c;
+        cout << c;
     }
-    else return 1;
 }
 
-void FindClusterLoader::SeekAndSetAllID(FindCluster &findCluster, int FindClusterID, int FieldID, fstream &data_base)
+void FindClusterLoader::SeekAndSetAllID(FindCluster &findCluster, int ID, int FID, fstream &data_base)
 {
-    int fID;
-    int fcID;
+    int fieldID = 0;
+    int findClusterID = 0;
     int Index_Line = 1;
     int HeaderLineSize = settings.getHEADER_LINE_SIZE();
     int FIDblock_width = settings.getFIDblock_width();
     int IDblock_width = settings.getIDblock_width();
-    
-    data_base.seekg(HeaderLineSize, ios::beg);
-    data_base >> fcID;
-    data_base.seekg(2*HeaderLineSize - FIDblock_width, ios::beg);
-    data_base >> fID;
 
-    while (fcID != FindClusterID && fID != FieldID && Index_Line <= SizeLines)
+    data_base.clear();
+    for (int i = 1; i < SizeLines; i++)
     {
-        data_base.seekg(HeaderLineSize*(2 + Index_Line), ios::beg);
-        data_base >> fcID;
-        data_base.seekg(HeaderLineSize*(3*HeaderLineSize - FIDblock_width), ios::beg);
-        data_base >> fID;
-        if (data_base.fail())
-            cout << "bad" << endl;
-        Index_Line++;       
+        data_base.seekg(HeaderLineSize * Index_Line, ios::beg);
+        data_base >> fieldID;
+        //check_next(data_base);
+        data_base >> findClusterID;
+        if (fieldID != FID) 
+        {
+            Index_Line++;
+            continue;
+        }
+        else if (findClusterID != ID)
+        {
+            Index_Line++;
+            continue;
+        }
+        else break;
+        //check_next(data_base);
     }
-    findCluster.setID(fcID);
-    findCluster.setFieldID(fID);
-    data_base.seekg(HeaderLineSize*Index_Line + IDblock_width, ios::beg);
+    if (data_base.eof())
+    {
+        cout << "findClusterID is wrong";
+        throw MyException("findClusterID is wrong");
+    }
+    findCluster.setID(findClusterID);
+    findCluster.setFieldID(fieldID);
+    data_base.seekg(HeaderLineSize*Index_Line + IDblock_width + FIDblock_width, ios::beg);
 }
 
 void FindClusterLoader::loadName(FindCluster &findCluster, fstream &data_base)
@@ -278,6 +330,9 @@ void FindClusterLoader::printParametersInFindClusterFile(fstream &data_base, Fin
 {
     string block;
 
+    block = to_string(findCluster.getFieldID());
+    settings.makeLine(block, settings.getFIDblock_width());
+    data_base << block;
     block = to_string(findCluster.getID());
     settings.makeLine(block, settings.getIDblock_width());
     data_base << block;
@@ -292,9 +347,6 @@ void FindClusterLoader::printParametersInFindClusterFile(fstream &data_base, Fin
     data_base << block;
     block = to_string(findCluster.getRnumber());
     settings.makeLine(block, settings.getRblock_width());
-    data_base << block;
-    block = to_string(findCluster.getFieldID());
-    settings.makeLine(block, settings.getFIDblock_width());
     data_base << block << endl;
 }
 
@@ -324,15 +376,14 @@ void FindClusterLoader::saveFindCluster(FindCluster &findCluster)
 
 void FindClusterLoader::loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
 {
-    fstream data_base("CardFindCluster.db", ios::binary | ios::in | ios::out | ios::app);
-
-    loadFileSize(data_base);
-    if (!isFalseIndex(findClusterID))
+    fstream data_base("CardFindCluster.db", ios::binary | ios::in);
+    if (!data_base.is_open())
     {
-        printf("Index out of range\n");
-        return;
+        cerr << "CardFindCluster is not existed!\n";
+        throw MyException("FindClusters are not saved");
     }
 
+    loadFileSize(data_base);
     SeekAndSetAllID(findCluster, findClusterID, FieldID, data_base);
     loadName(findCluster, data_base);
     loadSize(findCluster, data_base);
@@ -367,6 +418,9 @@ void ClusterLoader::printParametersInClusterFile(fstream &data_base, FindCluster
     for(int i = 0; i < ClustersSize; i++)
     {
         cluster = findedClusters[i];
+        block = to_string(cluster.getFCID());
+        settings.makeLine(block, settings.getFCIDblock_width());
+        data_base << block;
         block = to_string(cluster.getID());
         settings.makeLine(block, settings.getIDblock_width());
         data_base << block;
@@ -381,9 +435,6 @@ void ClusterLoader::printParametersInClusterFile(fstream &data_base, FindCluster
         data_base << block;
         block = "ClusterPoints_" + to_string(cluster.getFCID()) + "_" + to_string(cluster.getID()) + ".txt";
         settings.makeLine(block, settings.getPFblock_width());
-        data_base << block;
-        block = to_string(cluster.getFCID());
-        settings.makeLine(block, settings.getFCIDblock_width());
         data_base << block << endl;
     }
 }
@@ -431,7 +482,7 @@ void ClusterLoader::saveClusters(FindCluster &findCluster)
 
 void ClusterLoader::loadClusters(FindCluster &findCluster)
 {
-    fstream data_base("CardClusters.db", ios::binary | ios::in | ios::out | ios::app);
+    fstream data_base("CardClusters.db", ios::binary | ios::in);
     vector <Cluster> &findedClusters = findCluster.getFindedClusters();
     
     loadFileSize(data_base);
@@ -439,11 +490,11 @@ void ClusterLoader::loadClusters(FindCluster &findCluster)
 
     for (int i = 0; i < findCluster.getSize(); i++)
     {
+        loadFCID(findedClusters[i], data_base);
         loadID(findedClusters[i], data_base);
         loadSize(findedClusters[i], data_base);
         loadCenter(findedClusters[i], data_base);
         loadPointsFile(findedClusters[i], data_base);
-        loadFCID(findedClusters[i], data_base);
     }
 
     data_base.close();  
@@ -489,11 +540,17 @@ void ClusterLoader::loadPointsFile(Cluster &findedCluster, fstream &data_base)
     int OrderIndex;
 
     data_base >> filename;
+    cout << filename << endl;
     if (data_base.fail())
         cout << "bad knumber" << endl;
     int savePos = data_base.tellp();
     data_base.close();
     fin.open(filename, ios::in | ios::binary);
+    if (!fin.is_open())
+    {
+        cerr << filename << " is not existed!\n";
+        return;
+    }
     while(!fin.eof())
     {
         fin >> OrderIndex;
@@ -516,29 +573,28 @@ void ClusterLoader::loadFCID(Cluster &findedCluster, fstream &data_base)
 
 void ClusterLoader::SeekAndSetAllID(FindCluster &findCluster, fstream &data_base)
 {
-    int ID;
-    int fcID;
     int FCID = findCluster.getID();
+    int findClusterID = 0;
     int Index_Line = 1;
     int HeaderLineSize = settings.getHEADER_LINE_SIZE();
-    int FCIDblock_width = settings.getFCIDblock_width();
-    
-    data_base.seekg(HeaderLineSize, ios::beg);
-    data_base >> ID;
-    data_base.seekg(2*HeaderLineSize - FCIDblock_width, ios::beg);
-    data_base >> fcID;
 
-    while (ID != 0 && fcID != FCID && Index_Line <= SizeLines)
+    data_base.clear();
+    for (int i = 1; i < SizeLines; i++)
     {
-        data_base.seekg(HeaderLineSize*(2 + Index_Line), ios::beg);
-        data_base >> ID;
-        data_base.seekg(HeaderLineSize*(3*HeaderLineSize - FCIDblock_width), ios::beg);
-        data_base >> fcID;
-        if (data_base.fail())
-            cout << "bad" << endl;
-        Index_Line++;       
+        data_base.seekg(HeaderLineSize * Index_Line, ios::beg);
+        data_base >> findClusterID;
+        if (findClusterID != FCID) 
+        {
+            Index_Line++;
+            continue;
+        }
+        else break;
     }
-
+    if (data_base.eof())
+    {
+        cout << "findClusterID is wrong";
+        throw MyException("findClusterID is wrong");
+    }
     data_base.seekg(HeaderLineSize*Index_Line, ios::beg);
 }
 
@@ -555,7 +611,7 @@ void FCLSettings::makeLine(string &name, int width)
 
 void FCLSettings::makeHeaderLine()
 {
-    HEADER_LINE = IDblock + NMblock + Nblock + Kblock + Rblock + FIDblock + "\n";
+    HEADER_LINE = FIDblock + IDblock + NMblock + Nblock + Kblock + Rblock + "\n";
     HEADER_LINE_SIZE = HEADER_LINE.size();
 }
 
@@ -612,7 +668,7 @@ void CLSettings::makeLine(string &name, int width)
 
 void CLSettings::makeHeaderLine()
 {
-    HEADER_LINE = IDblock + Nblock + CXblock + CYblock + PFblock + FCIDblock + "\n";
+    HEADER_LINE = FCIDblock + IDblock + Nblock + CXblock + CYblock + PFblock + "\n";
     HEADER_LINE_SIZE = HEADER_LINE.size();
 }
 

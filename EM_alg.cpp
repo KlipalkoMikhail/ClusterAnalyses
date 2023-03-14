@@ -3,7 +3,6 @@
 #include "headers.h"
 #include "cluster.h"
 #include <cmath>
-#include "storage.h"
 #include "field.h"
 #include "time.h"
 #define EPSILON 0.0001
@@ -79,7 +78,7 @@ double Em_alg::probability_to_j(const vector <vector <double>> &cov_mat, const v
     return (1/c1)*exp(c2);
 }
 
-void Em_alg::turn_EM(int k, Field &field)
+vector <Cluster> Em_alg::turn_EM(int k, Field &field)
 {
     // нач состояние кластеров - центры первые к точек, P(a) = 1/k, мат ожидания это эти точки
     // нам нужны векторы x, y, P(a1),...,P(ak), - вероятности и ai - центры с координатами (ua1, ua2) - мат ожидания
@@ -101,14 +100,13 @@ void Em_alg::turn_EM(int k, Field &field)
 
     vector <Cluster> clusters(k);
     vector <Point> points = field.p();
-    storage.resize(k);
 
     for (int i = 0; i < k; i++)
     {
         probability[i] = (double)1/k;
         a[i].resize(N);
         prev[i].resize(N);
-        storage.clusters[i].reserve(N);
+        clusters[i].reserve(N);
         ux[i] = points[i].getx();
         uy[i] = points[i].gety();
     }
@@ -167,33 +165,20 @@ void Em_alg::turn_EM(int k, Field &field)
     {
         for (int i = 0; i < k; i++)
             prev[i] = a[i];
-        //cout << "prev init" << endl;
         for (int j = 0; j < k; j++)
         {
             for (int i = 0; i < N; i++)
             {
                 double sum = 0;
                 for (int m = 0; m < k; m++)
-                {  
-                   // cout << probability_to_j(x, y, ux, uy, i, m) << endl;
-                   // getchar();
                     sum += probability[m]*probability_to_j(covm[m], x, y, ux, uy, i, m);
-                    //cout << "** " << probability[m]*probability_to_j(covm[m], x, y, ux, uy, i, m) << " **" << endl;
-                }
-                //cout << "#########################################################################" << endl;
-                //cout << "sum is " << sum << endl; 
-                //getchar();
                 a[j][i] = probability_to_j(covm[j], x, y, ux, uy, i, j)*probability[j]/sum;
-                //cout << a[j][i] << endl;
-                //getchar();
             }
         }
+
         for (int j = 0; j < k; j++)
-        {
             probability[j] = P(a[j]);
-            //cout << P(a[j]) << endl;
-            //getchar();
-        }
+
         for (int j = 0; j < k; j++)
         {
             ux[j] = 0;
@@ -207,7 +192,6 @@ void Em_alg::turn_EM(int k, Field &field)
             uy[j] /= probability[j];
             ux[j] /= N;
             uy[j] /= N;
-            //cout << ux[j] << "   " << uy[j] << endl << endl;
         }
 
         for (int j = 0; j < k; j++)
@@ -234,10 +218,10 @@ void Em_alg::turn_EM(int k, Field &field)
         if (flag == 0) break;
     }
     cout << "EM algorithm has perfectly done" << endl;
-   time = clock() - time;
-   cout << "It has been taken " << (double)time/CLOCKS_PER_SEC << " seconds" << endl;
-   for (int i = 0; i < N; i++)
-   {
+    time = clock() - time;
+    cout << "It has been taken " << (double)time/CLOCKS_PER_SEC << " seconds" << endl;
+    for (int i = 0; i < N; i++)
+    {
         double max = 0;
         int indm = 0;
         for (int j = 0; j < k; j++)
@@ -248,7 +232,7 @@ void Em_alg::turn_EM(int k, Field &field)
                 indm = j;
             }
         }
-        storage.clusters[indm].add_p(i);
+        clusters[indm].add_p(i);
    }
    ofstream fout;
    fout.open("fout.dat");
@@ -265,6 +249,7 @@ void Em_alg::turn_EM(int k, Field &field)
         //fout << "p" << i << "(x, y) = " << a << "*(x - " << ux[i] << ")**2 + (" << b << " + " << c << ")*(x - " << ux[i] << ")*(y - " << uy[i] << ") + " << d << "*(y - " << uy[i] << ")**2 - 4" << endl; 
         // f(x,y) = a*(x - ux)^2 + (b + c)*(x - ux)(y - uy) + d*(y - uy)^2 
    }
+   
    prev.clear();
    a.clear();
    x.clear();
@@ -272,10 +257,10 @@ void Em_alg::turn_EM(int k, Field &field)
    covm.clear();
    ux.clear();
    uy.clear();
-   clusters.clear();
    points.clear();
    probability.clear();
    fout.close();
+   return clusters;
 }
 
 double Em_alg::P(const vector <double> &a)
@@ -288,9 +273,4 @@ double Em_alg::P(const vector <double> &a)
     }
     sum /= n;
     return sum;
-}
-
-Storage Em_alg::get_storage()
-{
-    return storage;
 }

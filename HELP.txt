@@ -21,6 +21,9 @@ CALCEN - calculates the center of the object
 SPANTRE - turns the spanning tree
 PRCEN - prints the center of the object
 RESULT - to see result of the algorithm
-SAVEDB - save data in data base
+SAVE_FIELD - save field in data base
+LOAD_FIELD - load field from data base
+SAVE_FINDC - save find cluster in data base
+LOAD_FINDC - load find cluster in data base
 HELP - print all of possible commands
 EXIT - ends off the programm

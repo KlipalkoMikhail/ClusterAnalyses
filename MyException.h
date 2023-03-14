@@ -1,9 +1,7 @@
-//  файл MyException.h
+#pragma once              
+#include <cstring>        
 
-#pragma once              // для однократного включения этого файла
-#include <cstring>        // для функций формирования С-строк
-
-enum ErrorCode            // список условных кодов отказов
+enum ErrorCode           
 {
    EC_RANGE = -3,
    EC_MEMORY = -2,
@@ -13,13 +11,17 @@ enum ErrorCode            // список условных кодов отказов
 
 class MyException
 {
-   char message[256];
+   string message;
    ErrorCode  code;
  public:
-   MyException(ErrorCode c, const char *msg) {
+   MyException(ErrorCode c, string msg) {
       code = c;
-      strncpy(message, msg, 255);
+      message = msg;
    }
-   const char * Message() const { return message; }
-   ErrorCode   Code() const { return code; }
+   MyException(string msg)
+   {
+      message = msg;
+   }
+   string getMessage() const { return message; }
+   ErrorCode   getCode() const { return code; }
 };

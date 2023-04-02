@@ -6,15 +6,16 @@
 class Saves
 {
     private:
-        vector <FindCluster> findClusters;
+        vector <vector <FindCluster>> findClusters;
         int size;
         FindCluster FindClusterPtr;
     public:
         Saves();
-        vector <FindCluster> & getFindClusters();
-        FindCluster & getFindCluster(int index);
-        void saveFindCluster(vector <Cluster> clusters, int k, double r, int FieldID, string name);
-        vector <Cluster> & get_clusters(int k);
+        vector <vector <FindCluster>> & getFindClusters();
+        FindCluster & getFindCluster(int FID, int FCID);
+        void printFindCluster(int FCID, int FID);
+        void saveFindCluster(vector <Cluster> clusters, Field &field, int k, double r, string name);
+        vector <Cluster> & get_clusters(int FID, int FCID);
         void saveResult(FindCluster &findCluster, Field &field);
         int ncluster();
         ~Saves();

@@ -65,6 +65,17 @@ vector <Cluster> & FindCluster::getFindedClusters()
     return findedClusters;
 }
 
+
+void FindCluster::setDBFID(int dbfid)
+{
+    DBFID = dbfid;
+}
+
+int FindCluster::getDBFID()
+{
+    return DBFID;
+}
+
 void FindCluster::printParameters()
 {
     cout << "Parameters of FindClusters" << endl;

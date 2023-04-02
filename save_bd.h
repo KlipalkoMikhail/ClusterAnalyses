@@ -8,6 +8,7 @@ class FLSettings
     private:
         string IDblock = "ID";
         string Nblock = "N";
+        string NFCblock = "NFC";
         string CXblock = "CX";
         string CYblock = "CY";
         string EV1block = "EV1";
@@ -18,6 +19,7 @@ class FLSettings
         int HEADER_LINE_SIZE;
         int IDblock_width;
         int Nblock_width;
+        int NFCblock_width;
         int CXblock_width;
         int CYblock_width;
         int EV1block_width;
@@ -31,6 +33,7 @@ class FLSettings
         {
             IDblock_width = 5;
             Nblock_width = 9;
+            NFCblock_width = 9;
             CXblock_width = 17;
             CYblock_width = 17;
             EV1block_width = 31;
@@ -46,6 +49,7 @@ class FLSettings
             makeLine(EV2block, EV2block_width);
             makeLine(EVblock, EV1block_width);
             makeLine(PFblock, PFblock_width);
+            makeLine(NFCblock, NFCblock_width);
             makeHeaderLine();
         }
         void makeLine(string &name, int width);
@@ -54,6 +58,7 @@ class FLSettings
         int getIDblock_width();
         int getPFblock_width();
         int getNblock_width();
+        int getNFCblock_width();
         int getCXblock_width();
         int getCYblock_width();
         int getEV1block_width();
@@ -63,12 +68,12 @@ class FLSettings
 class FCLSettings
 {
     private:
+        string FIDblock = "FID";
         string IDblock = "ID";
         string NMblock = "Name";
         string Nblock = "N";
         string Kblock = "K";
         string Rblock = "R";
-        string FIDblock = "FID";
         string HEADER_LINE;
         int HEADER_LINE_SIZE;
         int IDblock_width;
@@ -133,14 +138,18 @@ class FieldLoader
 {
     private:
         FLSettings settings;
-        int SizeLines;
+        int rowSize;
     public:
-        FieldLoader(){SizeLines = 0;}
+        FieldLoader(){rowSize = 0;}
+        void printRowSize(fstream & data_base);
         void printParametersInFieldFile(Field &field, fstream &data_base);
         void printHeaderLineFieldFile(fstream &data_base);
+        void resetKeysAndSaveRowSize(Field &field);
+        void readRowSizeFromFile();
         void loadFileSize(fstream &data_base);
-        void loadID(Field &field, fstream &data_base);
+        void loadID(Field &field, int ID, fstream &data_base);
         void loadSize(Field &field, fstream &data_base);
+        void loadNFC(Field &field, fstream & data_base);
         void loadCenter(Field &field, fstream &data_base);
         void loadEigenVectors(Field &field, fstream &data_base);
         void loadPointsFile(Field &field, fstream &data_base);
@@ -152,14 +161,16 @@ class FieldLoader
 class CLSettings
 {
     private:
+        string FIDblock = "FID";
+        string FCIDblock = "FCID";
         string IDblock = "ID";
         string Nblock = "N";
         string CXblock = "CX";
         string CYblock = "CY";
-        string FCIDblock = "FCID";
         string PFblock = "PF";
         string HEADER_LINE;
         int HEADER_LINE_SIZE;
+        int FIDblock_width;
         int IDblock_width;
         int Nblock_width;
         int CXblock_width;
@@ -171,6 +182,7 @@ class CLSettings
     public:
         CLSettings()
         {
+            FIDblock_width = 7;
             IDblock_width = 7;
             Nblock_width = 7;
             CXblock_width = 15;
@@ -178,6 +190,7 @@ class CLSettings
             PFblock_width = 29;
             FCIDblock_width = 7;
 
+            makeLine(FIDblock, FIDblock_width);
             makeLine(IDblock, IDblock_width);
             makeLine(Nblock, Nblock_width);
             makeLine(CXblock, CXblock_width);
@@ -195,6 +208,7 @@ class CLSettings
         int getCXblock_width();
         int getCYblock_width();
         int getFCIDblock_width();
+        int getFIDblock_width();
 };
 
 class ClusterLoader
@@ -204,6 +218,7 @@ class ClusterLoader
         int SizeLines;
     public:
         void printParametersInClusterFile(fstream &data_base, FindCluster &findCluster);
+        void loadFID(FindCluster & findCluster, fstream &data_base);
         void SeekAndSetAllID(FindCluster &findCluster, fstream &data_base);
         void printHeaderLineInFile(fstream &data_base);
         void loadFileSize(fstream &data_base);

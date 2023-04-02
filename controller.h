@@ -15,7 +15,7 @@ class Controller
     public:
         Buffer buffer;
         Exec exec;
-        Field fields[10];
+        vector <Field> fields;
         Saves sv;
         Loader DataBaseLoader;
         Config config;
@@ -26,7 +26,7 @@ class Controller
         void print_field(Field &field);
         void k_means(int k, Field &field);
         void create_cloud(CloudParameters cloud_parameters);
-        void saveInFileFindCluster(int launchIndex, Field &field);
+        void saveInFileFindCluster(Field &field, int launchIndex);
         void wave(double mode, Field &field);
         void dbscan(int m, double r, Field &field);
         void print_factors(int k, Field &field);
@@ -37,12 +37,13 @@ class Controller
         void calculate_factor(int k, Field &field);
         void calculate_center(Field &field);
         void span_tree(Field &field);
-        void print_logs(const string &LOG_MESSAGE);
         void saveField(Field &field);
         void loadField(Field &field, int id);
-        void saveFindCluster(FindCluster &findCluster);
+        void saveFindCluster(int FID, int FCID);
         void loadFindCluster(FindCluster &findCluster, int findClusterID, int fieldID);
+        Field & getFieldByFID(int FID);
         ~Controller();
 };
 
 #endif
+

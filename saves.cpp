@@ -55,53 +55,86 @@ int Saves::ncluster()
 
 Saves::Saves()
 {
-    findClusters.resize(1000);
+    findClusters.resize(100);
+    for (size_t i = 0; i < 10; i++)
+        findClusters[i].resize(10);
     size = 0;
 }
 
-void Saves::saveFindCluster(vector <Cluster> clusters, int k, double r, int FieldID, string name)
+void Saves::printFindCluster(int FID, int FCID)
 {
-    vector <Cluster> &findedClusters = findClusters[size].getFindedClusters();
+    FindCluster findCluster = getFindCluster(FID, FCID);
+    int ID, fID, SIZE, K;
+    double R;
+    string name;
+    ID = findCluster.getID();
+    fID = findCluster.getFieldID();
+    SIZE = findCluster.getSize();
+    K = findCluster.getKnumber();
+    R = findCluster.getRnumber();
+    name = findCluster.getName();
+    vector <Cluster> & clusters = findCluster.getFindedClusters();
+    cout << ID << ' ' << fID << ' ' << SIZE << ' ' << K << ' ' << R << ' ' << name << endl;
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < clusters[i].getFieldSize(); j++)
+        {
+            cout << clusters[i].tr(j) << ' ';
+        }
+        cout << endl;
+    }
+}
+
+void Saves::saveFindCluster(vector <Cluster> clusters, Field &field, int k, double r, string name)
+{
+    int FID = field.getID();
+    int DBFID = field.getDBID();
+    int FCID = field.getNFC();
+
+    vector <Cluster> &findedClusters = findClusters[FID][FCID].getFindedClusters();
     int ClustersSize = clusters.size();
     findedClusters.resize(ClustersSize);
-    
+
     for(int i = 0; i < ClustersSize; i++)
     {
         Cluster cluster = clusters[i];
         cluster.setID(i);
-        cluster.setFCID(size);
+        cluster.setFCID(FCID);
         findedClusters[i] = cluster;
     }
     
-    findClusters[size].setName(name);
+    findClusters[FID][FCID].setName(name);
     //cout << name << endl;
-    findClusters[size].setID(size);
+    findClusters[FID][FCID].setID(FCID);
+    findClusters[FID][FCID].setDBFID(DBFID);
     //cout << size << endl;
-    findClusters[size].setFieldID(FieldID);
+    findClusters[FID][FCID].setFieldID(FID);
     //cout << FieldID << endl;
-    findClusters[size].setKnumber(k);
+    findClusters[FID][FCID].setKnumber(k);
     //cout << k << endl;
-    findClusters[size].setRnumber(r);
+    findClusters[FID][FCID].setRnumber(r);
     //cout << r << endl;
-    findClusters[size].setSize(ClustersSize);
+    findClusters[FID][FCID].setSize(ClustersSize);
     //cout << ClustersSize << endl;
+    field.setNFC(field.getNFC() + 1);
     size++;
+
 }
 
 Saves::~Saves(){}
 
-vector <Cluster> & Saves::get_clusters(int FCID)
+vector <Cluster> & Saves::get_clusters(int FID, int FCID)
 {
-    vector <Cluster> &findedClusters = findClusters[FCID].getFindedClusters();
+    vector <Cluster> &findedClusters = findClusters[FID][FCID].getFindedClusters();
     return findedClusters;
 }
 
-vector <FindCluster> &Saves::getFindClusters()
+vector <vector <FindCluster>> &Saves::getFindClusters()
 {
     return findClusters;
 }
 
-FindCluster & Saves::getFindCluster(int index)
+FindCluster & Saves::getFindCluster(int FID, int FCID)
 {
-    return findClusters[index];
+    return findClusters[FID][FCID];
 }

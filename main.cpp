@@ -4,6 +4,8 @@
 #include "headers.h"
 #include "interface.h"
 
+STRICT_MODE_ON
+
 int main()
 {
     Interface interface;

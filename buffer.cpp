@@ -35,10 +35,6 @@ void Buffer::rotate(Cloud &cld, double degrees)
         double prevy = cld.gety_p(i) - cld.center.gety();
         cld.set_x_in_p(prevx*cos(a) - prevy*sin(a) + cld.center.getx(), i);
         cld.set_y_in_p(prevx*sin(a) + prevy*cos(a) + cld.center.gety(), i);
-        //cout << "Previous is ";
-        //cout << prevx << " " << prevy << endl;
-        //cout << "New is ";
-        //cout << prevx*cos(a) - prevy*sin(a) << " " << prevx*sin(a) + prevy*cos(a) << endl;
     }
 }
 

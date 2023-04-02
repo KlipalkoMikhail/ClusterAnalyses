@@ -62,5 +62,5 @@ void CloudParameters::load_dispersion(istream &stream)
 void CloudParameters::print_parameters(ostream &stream)
 {
     stream.setf(ios::left);
-    stream << size << '\t' << center_x << '\t' << center_y << '\t' << dispersion_x << '\t' << dispersion_y << endl;
+    stream << size << ' ' << center_x << ' ' << center_y << ' ' << dispersion_x << ' ' << dispersion_y << endl;
 }

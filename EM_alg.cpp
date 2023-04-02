@@ -55,6 +55,26 @@ double Em_alg::det(const vector <vector <double>> &cov_mat)
     return cov_mat[0][0]*cov_mat[1][1] - cov_mat[0][1]*cov_mat[1][0];
 }
 
+void Em_alg::printEllipsesForGNU(vector <vector <vector <double>>> &covm, vector <double> &ux, vector <double> &uy, const int &k)
+{
+    ofstream fout;
+    fout.open("fout.dat");
+    for (int i = 0 ; i < k; i++)
+    {
+        double a, b, c, d;
+        double detE = det(covm[i]);
+        a = covm[i][1][1]/detE;
+        b = -covm[i][0][1]/detE;
+        c = -covm[i][1][0]/detE;
+        d = covm[i][0][0]/detE;
+
+        fout << "f" << i << "(x, y) = " << a << "*(x - " << ux[i] << ")**2 + (" << b << " + " << c << ")*(x - " << ux[i] << ")*(y - " << uy[i] << ") + " << d << "*(y - " << uy[i] << ")**2" << endl;
+        //fout << "p" << i << "(x, y) = " << a << "*(x - " << ux[i] << ")**2 + (" << b << " + " << c << ")*(x - " << ux[i] << ")*(y - " << uy[i] << ") + " << d << "*(y - " << uy[i] << ")**2 - 4" << endl; 
+        // f(x,y) = a*(x - ux)^2 + (b + c)*(x - ux)(y - uy) + d*(y - uy)^2 
+    }
+    fout.close();
+}
+
 double Em_alg::probability_to_j(const vector <vector <double>> &cov_mat, const vector <double> &x, const vector <double> &y, const vector <double> &ux, const vector <double> &uy, const int &i, const int &j)
 {
     double a, b, c, d, x1, x2;
@@ -87,6 +107,7 @@ vector <Cluster> Em_alg::turn_EM(int k, Field &field)
     clock_t time;
     ios::sync_with_stdio(0);
     cin.tie(0);
+
     vector <double> probability(k);
     vector <vector <double>> a(k);
     vector <vector <double>> prev(k);
@@ -99,7 +120,7 @@ vector <Cluster> Em_alg::turn_EM(int k, Field &field)
     vector <double> y(N);
 
     vector <Cluster> clusters(k);
-    vector <Point> points = field.p();
+    vector <Point> &points = field.get_points_reference();
 
     for (int i = 0; i < k; i++)
     {
@@ -172,6 +193,7 @@ vector <Cluster> Em_alg::turn_EM(int k, Field &field)
                 double sum = 0;
                 for (int m = 0; m < k; m++)
                     sum += probability[m]*probability_to_j(covm[m], x, y, ux, uy, i, m);
+                if (sum < 1e-25) break;
                 a[j][i] = probability_to_j(covm[j], x, y, ux, uy, i, j)*probability[j]/sum;
             }
         }
@@ -188,6 +210,7 @@ vector <Cluster> Em_alg::turn_EM(int k, Field &field)
                 ux[j] += a[j][i]*x[i];
                 uy[j] += a[j][i]*y[i];
             }
+            if (probability[j] < 1e-25) break;
             ux[j] /= probability[j];
             uy[j] /= probability[j];
             ux[j] /= N;
@@ -220,6 +243,7 @@ vector <Cluster> Em_alg::turn_EM(int k, Field &field)
     cout << "EM algorithm has perfectly done" << endl;
     time = clock() - time;
     cout << "It has been taken " << (double)time/CLOCKS_PER_SEC << " seconds" << endl;
+
     for (int i = 0; i < N; i++)
     {
         double max = 0;
@@ -234,38 +258,24 @@ vector <Cluster> Em_alg::turn_EM(int k, Field &field)
         }
         clusters[indm].add_p(i);
    }
-   ofstream fout;
-   fout.open("fout.dat");
-   for (int i = 0 ; i < k; i++)
-   {
-        double a, b, c, d;
-        double detE = det(covm[i]);
-        a = covm[i][1][1]/detE;
-        b = -covm[i][0][1]/detE;
-        c = -covm[i][1][0]/detE;
-        d = covm[i][0][0]/detE;
 
-        fout << "f" << i << "(x, y) = " << a << "*(x - " << ux[i] << ")**2 + (" << b << " + " << c << ")*(x - " << ux[i] << ")*(y - " << uy[i] << ") + " << d << "*(y - " << uy[i] << ")**2" << endl;
-        //fout << "p" << i << "(x, y) = " << a << "*(x - " << ux[i] << ")**2 + (" << b << " + " << c << ")*(x - " << ux[i] << ")*(y - " << uy[i] << ") + " << d << "*(y - " << uy[i] << ")**2 - 4" << endl; 
-        // f(x,y) = a*(x - ux)^2 + (b + c)*(x - ux)(y - uy) + d*(y - uy)^2 
-   }
-   
-   prev.clear();
-   a.clear();
-   x.clear();
-   y.clear();
-   covm.clear();
-   ux.clear();
-   uy.clear();
-   points.clear();
-   probability.clear();
-   fout.close();
+   printEllipsesForGNU(covm, ux, uy, k);
+
+   vector <double> ().swap(probability);
+   vector <double> ().swap(ux);
+   vector <double> ().swap(uy);
+   vector <double> ().swap(x);
+   vector <double> ().swap(y);
+   vector <vector <double>> ().swap(prev);
+   vector <vector <double>> ().swap(a);
+   vector <vector <vector <double>>> ().swap(covm);
+
    return clusters;
 }
 
 double Em_alg::P(const vector <double> &a)
 {
-    int n = (int)a.size();
+    int n = static_cast<int> (a.size());
     double sum = 0;
     for (int i = 0; i < n; i++)
     {

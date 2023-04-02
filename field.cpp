@@ -17,8 +17,11 @@ void Field::add_cloud(Cloud &cld)
 
 Field::Field()
 {
+    ID = 0;
+    DBID = 0;
     state_work = 0;
     N = 0;
+    NFC = 0;
     NCL = 0;
     isSaved = 0;
     clouds.resize(100);
@@ -32,9 +35,24 @@ Cloud Field::get_copy_cloud(int k)
      return clouds[k];
 }
 
+int Field::getNFC()
+{
+    return NFC;
+}
+
+void Field::setNFC(int nfc)
+{
+    NFC = nfc;
+}
+
 bool Field::is_saved()
 {
     return isSaved;
+}
+
+void Field::setIsSaved(bool work)
+{
+    isSaved = work;
 }
 
 void Field::state_gen(CloudParameters cloud_parameters)
@@ -65,16 +83,6 @@ void Field::state_gen(CloudParameters cloud_parameters)
     for (i = 0; i < N; i++)
         D[i].resize(0);
     state_work = 1;
-}
-
-void Field::PrintPointsInFile()
-{
-    string filename = "MyPoint_" + to_string(ID) + ".txt";
-    ofstream PointFile(filename, ios::out | ios:: binary);
-
-    for (int i = 0; i < N; i++)
-        PointFile << points[i].getNP() << " " << points[i].getx() << " " << points[i].gety() << endl;
-    PointFile.close();
 }
 
 int Field::file_save()
@@ -145,12 +153,34 @@ vector <Point> & Field::get_points_reference()
 
 Field::~Field()
 {
-    //clouds.clear();
-    points.clear();
-    factors.clear();
+    vector <Cloud> ().swap(clouds);
+    vector <Point> ().swap(points);
+    vector <vector <double>> ().swap(D);
+    vector <double> ().swap(factors);
 }
 
 void Field::set_state_work(int state)
 {
     state_work = state;
 }
+
+int Field::getID()
+{
+    return ID;
+}
+
+int Field::getDBID()
+{
+    return DBID;
+}
+
+void Field::setID(int id)
+{
+    ID = id;
+}
+
+void Field::setDBID(int dbid)
+{
+    DBID = dbid;
+}
+

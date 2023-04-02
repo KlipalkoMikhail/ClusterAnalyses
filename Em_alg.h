@@ -14,6 +14,7 @@ class Em_alg
         double det(const vector <vector <double>> &cov_mat);
         double probability_to_j(const vector <vector <double>> &cov_mat, const vector <double> &x, const vector <double> &y, const vector <double> &ux, const vector <double> &uy, const int &i, const int &j);
         vector <Cluster> turn_EM(int k, Field &field);
+        void printEllipsesForGNU(vector <vector <vector <double>>> &covm, vector <double> &ux, vector <double> &uy, const int &k);
         double norma(const vector <double> & x, const vector <double> &y);
         ~Em_alg(){};
 };

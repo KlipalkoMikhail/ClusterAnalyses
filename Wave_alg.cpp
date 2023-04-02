@@ -11,7 +11,6 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
     vector <Point> points = field.p();
     char filename[120];
     ofstream gnufile;
-    // ������� ��������, ������� ����������, ������� �����, ������� a, b, nul, ���������� N - ����� �����, T - ������
     vector <Cluster> clusters;
 
     int N = field.size();
@@ -72,24 +71,19 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
     {
         if (!blong[k])
         {
-            // ������� ������� � ��������� � ���� �����
             Cluster cl;
             cl.reserve(N);
             blong[k] = 1;
             a[k] = 1;
             cl.add_p(k);
-            // ������� ����, �������� ����� ���������� �����
             b = a;
             index.push_back(k);
-
-            // �������� �� ����� ��������� �����
             while(1)
             {
                 for(list <int> :: iterator it = index.begin(); it != index.end(); it++)
                 {
-                    for(int i = 0 ; i < N; i++)
+                    for(i = 0 ; i < N; i++)
                     {
-                        // ��������� ��������� �� ����� ������ � ���������� �� ���
                         if(((B[*it][i]) == 1) && (a[i] == 0) && (blong[i] == 0))
                         {
                             // �������� �����
@@ -127,7 +121,6 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
         T = 1;
         a = b = nul;
     }
-    // ��������� ���������
     cout << "The wave algorithm has done its work\n";
     return clusters;
 }

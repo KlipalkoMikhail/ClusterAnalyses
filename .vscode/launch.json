@@ -1,0 +1,16 @@
+{
+    // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
+    // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
+    // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GDB",
+            "program": "${workspaceFolder}/${command:AskForProgramName}",
+            "stopOnEntry": true,
+            "arguments": "span_tree.cpp cloud.cpp cluster.cpp save_bd.cpp controller.cpp cloud_parameters.cpp field.cpp main.cpp interface.cpp point.cpp functions.cpp saves.cpp buffer.cpp Kmeans_alg.cpp Dbscan_alg.cpp EM_alg.cpp Wave_alg.cpp Find_Cluster.cpp Logger.cpp factors.cpp config.cpp -std=c++11 -Wall -Wextra  -Wstrict-aliasing -pedantic -fmax-errors=5 -Werror -Wunreachable-code -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual -Wshadow -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option -o"
+        }
+    ]
+}

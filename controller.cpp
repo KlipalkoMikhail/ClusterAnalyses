@@ -63,23 +63,27 @@ Controller::Controller()
 {
     Status_Work = 1;
     fields_size = 0;
+    fields.resize(10);
     logger.basicConfig("logfile_controller.txt");
 }
 
-Controller::~Controller(){}
+Controller::~Controller()
+{
+    vector <Field> ().swap(fields);
+}
 
 void Controller::k_means(int k, Field &field)
 {
     string name = "K-means";
     try{
         vector <Cluster> findedClusters = exec.kmeans.k_means(k, field);
-        sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
-        string message = "Kmeans is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        sv.saveFindCluster(findedClusters, field, k, 0, name);
+        string message = "Kmeans is executed with parameters " + to_string(k) + " " + to_string(field.getID());
         logger.info(message);
     }
     catch(std::exception& e)
     {
-        string message = "Kmeans is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        string message = "Kmeans is executed with parameters " + to_string(k) + " " + to_string(field.getID());
         std::cerr << e.what() << '\n';
         logger.error(message);
         message = e.what();
@@ -95,14 +99,14 @@ void Controller::dbscan(int m , double r, Field &field)
     try
     {
         vector <Cluster> findedClusters = exec.dbscan.dbscan(m, r, field);
-        sv.saveFindCluster(findedClusters, m, r, field.ID, name);
-        string message = "dbscan is executed with parameters " + to_string(m) + " " + to_string(r) + " " + to_string(field.ID);
+        sv.saveFindCluster(findedClusters, field, m, r, name);
+        string message = "dbscan is executed with parameters " + to_string(m) + " " + to_string(r) + " " + to_string(field.getID());
         logger.info(message);
     }
     catch(std::exception& e)
     {
         std::cerr << e.what() << '\n';
-        string message = "dbscan is executed with parameters " + to_string(m) + " " + to_string(r) + " " + to_string(field.ID);
+        string message = "dbscan is executed with parameters " + to_string(m) + " " + to_string(r) + " " + to_string(field.getID());
         logger.error(message);
         message = e.what();
         logger.error(message);
@@ -116,14 +120,14 @@ void Controller::wave(double mode, Field &field)
     string name = "Wave";
     try{
         vector <Cluster> findedClusters = exec.wave.wave(mode, field);
-        sv.saveFindCluster(findedClusters, 0, mode, field.ID, name);
-        string message = "wave is executed with parameters " + to_string(mode) + " " + to_string(field.ID);
+        sv.saveFindCluster(findedClusters, field, 0, mode, name);
+        string message = "wave is executed with parameters " + to_string(mode) + " " + to_string(field.getID());
         logger.info(message);
     }
     catch(std::exception& e)
     {
         std::cerr << e.what() << '\n';
-        string message = "wave is executed with parameters " + to_string(mode) + " " + to_string(field.ID);
+        string message = "wave is executed with parameters " + to_string(mode) + " " + to_string(field.getID());
         logger.error(message);
         message = e.what();
         logger.error(message);
@@ -136,9 +140,9 @@ void Controller::exp_max(int k, Field &field)
     string name = "EM";
     try{
         vector <Cluster> findedClusters = exec.em.turn_EM(k, field);
-        sv.saveFindCluster(findedClusters, k, 0, field.ID, name);
+        sv.saveFindCluster(findedClusters, field, k, 0, name);
         cout << "tut";
-        string message = "expectation–maximization algorithm is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        string message = "expectation–maximization algorithm is executed with parameters " + to_string(k) + " " + to_string(field.getID());
         cout << "before";
         logger.info(message);
         cout << "fag";
@@ -146,7 +150,7 @@ void Controller::exp_max(int k, Field &field)
     catch(std::exception& e)
     {
         std::cerr << e.what() << '\n';
-        string message = "expectation–maximization algorithm is executed with parameters " + to_string(k) + " " + to_string(field.ID);
+        string message = "expectation–maximization algorithm is executed with parameters " + to_string(k) + " " + to_string(field.getID());
         logger.error(message);
         message = e.what();
         logger.error(message);
@@ -178,7 +182,7 @@ void Controller::print_field(Field &field)
     field.file_save();
 
     // сохраняем результаты в лог-файл контроллера
-    string message = "print field is executed with parameters " + to_string(field.ID);
+    string message = "print field is executed with parameters " + to_string(field.getID());
     logger.info(message);
 }
 
@@ -194,7 +198,8 @@ void Controller::create_cloud(CloudParameters parameters)
         fields_size++;
 
     fields[parameters.field_index].state_gen(parameters);
-    fields[parameters.field_index].ID = parameters.field_index;
+    fields[parameters.field_index].setID(parameters.field_index);
+    fields[parameters.field_index].setDBID(parameters.field_index);
     //fields[parameters.field_index].PrintPointsInFile();
 
     std::cout << "Cloud has been created with parameters: ";
@@ -253,13 +258,13 @@ void Controller::print_cloud(int i, Field &field)
     }
 
     // результаты отработки в лог-файл контроллера
-    string message = "print cloud is executed with parameters " + to_string(i) + " " + to_string(field.ID);
+    string message = "print cloud is executed with parameters " + to_string(i) + " " + to_string(field.getID());
     logger.info(message);
 }
 
-void Controller::saveInFileFindCluster(int launchIndex, Field &field)
+void Controller::saveInFileFindCluster(Field &field, int launchIndex)
 {
-    FindCluster &findCluster = sv.getFindCluster(launchIndex);
+    FindCluster &findCluster = sv.getFindCluster(field.getID(), launchIndex);
     string name = findCluster.getName();
     int Knumber = findCluster.getKnumber();
     double Rnumber = findCluster.getRnumber();
@@ -268,9 +273,9 @@ void Controller::saveInFileFindCluster(int launchIndex, Field &field)
     sv.saveResult(findCluster, field);
 
     string message = "save find cluster result is executed with parameters " + to_string(launchIndex) + " " +   
-                                                                               to_string(field.ID);
+                                                                               to_string(field.getID());
     logger.info(message);
-    message = "find clusted result saved with parameters " + to_string(launchIndex) + " " + name + " " + to_string(Knumber) + " " + to_string(Rnumber) + " " + to_string(size) + " " + to_string(field.ID);
+    message = "find clusted result saved with parameters " + to_string(launchIndex) + " " + name + " " + to_string(Knumber) + " " + to_string(Rnumber) + " " + to_string(size) + " " + to_string(field.getID());
     logger.debug(message);
     cout << name << "done as " << launchIndex << "th algorithm with parameters k = " << Knumber << ", r = " << Rnumber << ", size = " << size << endl;
 }
@@ -293,7 +298,7 @@ void Controller::print_clouds(Field &field)
         for (int j = 0; j < clouds[k].size(); j++)
                 fout[i] << points[j].getx() << "\t\t" << points[j].gety() << endl;
     }
-    string message = "print cloud is executed with parameters " + to_string(field.ID);
+    string message = "print cloud is executed with parameters " + to_string(field.getID());
     logger.info(message);
 }
 
@@ -313,7 +318,7 @@ void Controller::calculate_factor(int k, Field &field)
     if (k == 2)
     {
         int LaunchIndex;
-        FindCluster &findCluster = sv.getFindCluster(LaunchIndex);
+        FindCluster &findCluster = sv.getFindCluster(field.getID(), LaunchIndex);
         vector <Cluster> & clusters = findCluster.getFindedClusters();
         int ClusterSize = clusters.size();
         int FieldSize = field.size();
@@ -332,7 +337,7 @@ void Controller::calculate_factor(int k, Field &field)
         }
     }
     string message = "calculate factors is executed with parameters " + to_string(k) + " " +   
-                                                                        to_string(field.ID);
+                                                                        to_string(field.getID());
     logger.info(message);
 }
 
@@ -363,7 +368,7 @@ void Controller::print_factors(int m, Field &field)
     {
         ofstream fout;
         int LaunchIndex;
-        FindCluster &findCluster = sv.getFindCluster(LaunchIndex);
+        FindCluster &findCluster = sv.getFindCluster(field.getID(), LaunchIndex);
         vector <Cluster> & clusters = findCluster.getFindedClusters();
         int ClusterSize = clusters.size();
 
@@ -394,7 +399,7 @@ void Controller::print_factors(int m, Field &field)
         fieldo.close();
     }
     string message = "print factors is executed with parameters " + to_string(m) + " " +   
-                                                                    to_string(field.ID);
+                                                                    to_string(field.getID());
     logger.info(message);
 }
 
@@ -404,7 +409,7 @@ void Controller::span_tree(Field &field)
     //sv.saveFindCluster(findedClusters, 0, 0, "SpanningTree");
     
     Status_Work = 2;
-    string message = "spanning tree is executed with parameters " + to_string(field.ID);
+    string message = "spanning tree is executed with parameters " + to_string(field.getID());
     logger.info(message);
 
 }
@@ -413,7 +418,7 @@ void Controller::saveField(Field &field)
 {
     FieldLoader &Loader = DataBaseLoader.getFieldLoader();
     Loader.saveField(field);
-    string message = "save field is executed with parameters " + to_string(field.ID);
+    string message = "save field is executed with parameters " + to_string(field.getID());
     logger.info(message);
 }
 
@@ -443,7 +448,7 @@ void createClusterFiles(FindCluster &findCluster)
     for(int i = 0; i < ClustersSize; i++)
     {
         Cluster & cluster = findedClusters[i];
-        filename = "ClusterPoints_" + to_string(cluster.getFCID()) + "_" + to_string(cluster.getID()) + ".txt";
+        filename = "ClusterPoints_" + to_string(findCluster.getDBFID()) + "_" + to_string(cluster.getFCID()) + "_" + to_string(cluster.getID()) + ".txt";
         fout.open(filename, ios::out | ios::binary);
         for (int j = 0; j < cluster.getFieldSize(); j++)
         {
@@ -453,15 +458,35 @@ void createClusterFiles(FindCluster &findCluster)
         fout.close();
     }
 }
-void Controller::saveFindCluster(FindCluster &findCluster)
+
+Field & Controller::getFieldByFID(int FID)
 {
+    cout << FID << ' ' << fields_size << endl;
+    int checkedID = -1;
+    for (int i = 0; i < fields_size; i++)
+    {
+        cout << fields[i].getID() << ' ' << endl;
+        if (fields[i].getID() == FID)
+        {
+            checkedID = i;
+            break;
+        }
+    }
+
+    if (checkedID == -1)
+        throw new MyException("field is not existed");
+    return fields[checkedID];
+}
+
+void Controller::saveFindCluster(int FID, int FCID)
+{
+    FindCluster &findCluster = sv.getFindCluster(FID, FCID);
     try{
         FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
-        int FID = findCluster.getFieldID();
-        if(!fields[FID].is_saved())
-        {
+        Field & field = fields[FID];
+        if(!field.is_saved())
             throw MyException("Field " + to_string(FID) + " is not saved");
-        }
+        findCluster.setDBFID(field.getDBID());
         Loader.saveFindCluster(findCluster);
         ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
         calculate_clusters_center(findCluster.getFindedClusters(), fields[FID]);
@@ -521,7 +546,7 @@ void Controller::calculate_center(Field &field)
     field.center.setx(sum_x);
     field.center.sety(sum_y);
 
-    string message = "calculated center with parameters " + to_string(field.ID);
+    string message = "calculated center with parameters " + to_string(field.getID());
     logger.info(message);
 }
 
@@ -531,6 +556,6 @@ void Controller::print_center(Field &field)
     //FindCluster findCluster = sv.getFindCluster(0);
     //calculate_clusters_center(findCluster.getFindedClusters(), fields[findCluster.getFieldID()]);
     cout << "Center is (" << setprecision(6) << field.center.getx() << " " << field.center.gety() << ")" << endl;
-    string message = "print center is executed with parameters " + to_string(field.ID);
+    string message = "print center is executed with parameters " + to_string(field.getID());
     logger.info(message);
 }

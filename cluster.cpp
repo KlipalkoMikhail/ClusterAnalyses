@@ -13,7 +13,7 @@ void Cluster::setc(int col)
 void Cluster::reserve(int N)
 {
     blong.resize(N);
-    for(int i = 0; i < (int)blong.size(); i++)
+    for(int i = 0; i < static_cast<int> (blong.size()); i++)
     {
         blong[i] = 0;
     }

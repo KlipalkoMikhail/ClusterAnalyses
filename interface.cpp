@@ -212,7 +212,7 @@ void Interface::request_is_find_cluster()
 
     string message = "Requested find cluster with parameters " + to_string(field_index) + " " + to_string(algorithm_index);
     logger.info(message);
-    controller.saveInFileFindCluster(algorithm_index, controller.fields[field_index]);
+    controller.saveInFileFindCluster(controller.fields[field_index], algorithm_index);
 }
 
 void Interface::request_is_print_center()
@@ -359,7 +359,7 @@ void Interface::request_is_load_find_cluster()
 
     string message = "Requested load find cluster with parameters " + to_string(field_index) + " " + to_string(findClusterIndex);
     logger.info(message);
-    controller.loadFindCluster(controller.sv.getFindCluster(findClusterIndex), findClusterIndex, field_index);
+    controller.loadFindCluster(controller.sv.getFindCluster(field_index, findClusterIndex), findClusterIndex, field_index);
 }
 
 void Interface::request_is_save_find_cluster()
@@ -376,7 +376,7 @@ void Interface::request_is_save_find_cluster()
 
     string message = "Requested save find cluster with parameters " + to_string(field_index) + " " + to_string(findClusterIndex);
     logger.info(message);
-    controller.saveFindCluster(controller.sv.getFindCluster(findClusterIndex));
+    controller.saveFindCluster(field_index, findClusterIndex);
 }
 
 void Interface::request_is_exit_string()
@@ -400,58 +400,58 @@ int Interface::Starts()
     cin >> request;
     if (request == commands.HELP)
         request_is_help_string();
-    if (request == commands.CLOUD_CREATE)
+    else if (request == commands.CLOUD_CREATE)
         request_is_create_string();
-    if (request == commands.CLOUD_PRINT)
+    else if (request == commands.CLOUD_PRINT)
         request_is_print_cloud();
-    if (request == commands.FIELD_PRINT)
+    else if (request == commands.FIELD_PRINT)
         request_is_print_field();
-    if (request == commands.WAVE)
+    else if (request == commands.WAVE)
         request_is_wave_string();
-    if (request == commands.DBSCAN)
+    else if (request == commands.DBSCAN)
         request_is_dbscan_string();
-    if (request == commands.K_MEANS)
+    else if (request == commands.K_MEANS)
         request_is_kmeans_string();
-    if (request == commands.EXP_MAX)
+    else if (request == commands.EXP_MAX)
         request_is_expmax_string();
-    if (request == commands.FACT_PRINT)
+    else if (request == commands.FACT_PRINT)
         request_is_print_factors();
-    if (request == commands.FACT_CALC)
+    else if (request == commands.FACT_CALC)
         request_is_calculate_factors();
-    if (request == commands.CENT_CALC)
+    else if (request == commands.CENT_CALC)
         request_is_calculate_center();
-    if (request == commands.RESULT)
+    else if (request == commands.RESULT)
         request_is_find_cluster();
-    if (request == commands.CENT_PRINT)
+    else if (request == commands.CENT_PRINT)
         request_is_print_center();
-    if (request == commands.COPY_BUFF)
+    else if (request == commands.COPY_BUFF)
         request_is_buffer_copy();
-    if (request == commands.PAST_BUFF)
+    else if (request == commands.PAST_BUFF)
         request_is_buffer_past();
-    if (request == commands.MOVE_BUFF)
+    else if (request == commands.MOVE_BUFF)
         request_is_buffer_move();
-    if (request == commands.ROTATE_BUFF)
+    else if (request == commands.ROTATE_BUFF)
         request_is_buffer_rotate();
-    if (request == commands.PRINT_BUFF)
+    else if (request == commands.PRINT_BUFF)
         request_is_buffer_print();
-    if (request == commands.SPAN_TREE)
+    else if (request == commands.SPAN_TREE)
         request_is_spanning_tree();
-    if (request == commands.SAVE_FIELD)
+    else if (request == commands.SAVE_FIELD)
         request_is_save_field();
-    if (request == commands.LOAD_FIELD)
+    else if (request == commands.LOAD_FIELD)
         request_is_load_field();
-    if (request == commands.SAVE_FINDC)
+    else if (request == commands.SAVE_FINDC)
         request_is_save_find_cluster();
-    if (request == commands.LOAD_FINDC)
+    else if (request == commands.LOAD_FINDC)
         request_is_load_find_cluster();
-    if (request == commands.EXIT)
+    else if (request == commands.EXIT)
     {
         request_is_exit_string();
         return 0;
     } 
     else {
-        while (getchar() == 1);
-        //cout << "Unknown command. Try again!\n";
+        cout << "Request is |" << request << "|" << endl;
+        cout << "Unknown command. Try again!\n";
         return -1;
     }
 

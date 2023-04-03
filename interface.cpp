@@ -48,6 +48,14 @@ void Interface::request_is_create_string()
     controller.create_cloud(parameters);
 }
 
+void Interface::request_is_print_active_fields()
+{
+    controller.printActiveFields();
+    string message = "Requested print active fields";
+    
+    logger.info(message);
+}
+
 void Interface::request_is_print_cloud()
 {
     int field_index = 0;
@@ -336,13 +344,13 @@ void Interface::request_is_load_field()
 {
     int field_index = 0;
 
-    cout << "Enter field index (starts with 0)\n";
+    cout << "Enter field index in fields data base (starts with 0)\n";
     cin >> field_index;
     cout << "Field index = " << field_index << endl;
 
     string message = "Requested load field with parameters " + to_string(field_index);
     logger.info(message);
-    controller.loadField(controller.fields[field_index], field_index);
+    controller.loadField(field_index);
 }
 
 void Interface::request_is_load_find_cluster()
@@ -444,6 +452,8 @@ int Interface::Starts()
         request_is_save_find_cluster();
     else if (request == commands.LOAD_FINDC)
         request_is_load_find_cluster();
+    else if (request == commands.PRINT_ACTIVE_FIELDS)
+        request_is_print_active_fields();
     else if (request == commands.EXIT)
     {
         request_is_exit_string();

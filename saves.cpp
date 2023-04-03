@@ -55,9 +55,6 @@ int Saves::ncluster()
 
 Saves::Saves()
 {
-    findClusters.resize(100);
-    for (size_t i = 0; i < 10; i++)
-        findClusters[i].resize(10);
     size = 0;
 }
 
@@ -91,6 +88,15 @@ void Saves::saveFindCluster(vector <Cluster> clusters, Field &field, int k, doub
     int DBFID = field.getDBID();
     int FCID = field.getNFC();
 
+    if (FID == size)
+    {
+        size++;
+        findClusters.resize(size);
+    }
+    else if (FID > size) throw MyException("Wrong FID in saving find clusters");
+
+    findClusters[FID].resize(findClusters[FID].size() + 1);
+
     vector <Cluster> &findedClusters = findClusters[FID][FCID].getFindedClusters();
     int ClustersSize = clusters.size();
     findedClusters.resize(ClustersSize);
@@ -117,11 +123,12 @@ void Saves::saveFindCluster(vector <Cluster> clusters, Field &field, int k, doub
     findClusters[FID][FCID].setSize(ClustersSize);
     //cout << ClustersSize << endl;
     field.setNFC(field.getNFC() + 1);
-    size++;
-
 }
 
-Saves::~Saves(){}
+Saves::~Saves()
+{
+    vector <vector <FindCluster>> ().swap(findClusters);
+}
 
 vector <Cluster> & Saves::get_clusters(int FID, int FCID)
 {

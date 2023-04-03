@@ -34,6 +34,7 @@ public:
     string LOAD_FINDC = "LOAD_FINDC";
     string EXIT = "EXIT";
     string HELP = "HELP";
+    string PRINT_ACTIVE_FIELDS = "PRINT_ACTIVE_FIELDS";
 };
 
 class InterfaceSettings
@@ -86,6 +87,7 @@ class Interface
         void request_is_load_find_cluster();
         void request_is_save_find_cluster();
         void request_is_exit_string();
+        void request_is_print_active_fields();
         ~Interface();
 
 };

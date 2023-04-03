@@ -38,9 +38,10 @@ class Controller
         void calculate_center(Field &field);
         void span_tree(Field &field);
         void saveField(Field &field);
-        void loadField(Field &field, int id);
+        void loadField(int id);
         void saveFindCluster(int FID, int FCID);
         void loadFindCluster(FindCluster &findCluster, int findClusterID, int fieldID);
+        void printActiveFields();
         Field & getFieldByFID(int FID);
         ~Controller();
 };

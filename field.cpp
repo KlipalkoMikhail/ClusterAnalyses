@@ -153,6 +153,7 @@ vector <Point> & Field::get_points_reference()
 
 Field::~Field()
 {
+    cout << "Field " << endl;
     vector <Cloud> ().swap(clouds);
     vector <Point> ().swap(points);
     vector <vector <double>> ().swap(D);

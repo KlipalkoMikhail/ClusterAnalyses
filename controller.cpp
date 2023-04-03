@@ -19,6 +19,13 @@ double distance(const Point &x, const Point &y)
     return sqrt((x.getx() - y.getx())*(x.getx()- y.getx()) + (x.gety() - y.gety())*(x.gety() - y.gety()));
 }
 
+void Controller::printActiveFields()
+{
+    for (int i = 0; i < fields_size; i++)
+        if (fields[i].is_executed())
+            cout << "FID=" << fields[i].getID() << " DBID=" << fields[i].getDBID() << " is active" << endl; 
+}
+
 void calculate_clusters_center(vector <Cluster> &clusters, Field &field)
 {
     Point center;
@@ -63,7 +70,6 @@ Controller::Controller()
 {
     Status_Work = 1;
     fields_size = 0;
-    fields.resize(10);
     logger.basicConfig("logfile_controller.txt");
 }
 
@@ -173,8 +179,8 @@ void Controller::print_field(Field &field)
         cout << " X " << "\t\t\t" << " Y " << endl;
         for (int i = 0; i < field.size(); i++)
         {
-            //cout << field.getx_p(i) << "\t\t";
-            //cout << field.gety_p(i) << endl;
+            cout << field.getx_p(i) << "\t\t";
+            cout << field.gety_p(i) << endl;
         }
     }
 
@@ -188,14 +194,19 @@ void Controller::print_field(Field &field)
 
 void Controller::create_cloud(CloudParameters parameters)
 {
+    
     if (parameters.field_index > fields_size)
     {
         cout << "Put the index that lower then " << fields_size << endl;
         return;
     }
-    
-    if (!fields[parameters.field_index].is_executed())
-        fields_size++;
+    else if (parameters.field_index == fields_size)
+    {
+        fields.resize(fields_size + 1);
+        fields_size += 1;
+        fields[parameters.field_index].set_state_work(1);
+    }
+
 
     fields[parameters.field_index].state_gen(parameters);
     fields[parameters.field_index].setID(parameters.field_index);
@@ -422,12 +433,39 @@ void Controller::saveField(Field &field)
     logger.info(message);
 }
 
-void Controller::loadField(Field &field, int id)
+void printFieldPa(Field & field)
+{
+    cout << "ID is " << field.getID() << endl;
+    cout << "Size is " << field.size() << endl;
+    cout << "Center is " << field.center.getx() << ' ' << field.center.gety() << endl;
+    cout << "factors ";
+    cout << field.factors[0] << endl;
+    cout << field.factors[1] << endl;
+    cout << field.factors[2] << endl
+         << field.factors[3] << endl
+        << field.factors[4] << endl
+        << field.factors[5] << endl
+        << field.factors[6] << endl
+         << field.factors[7] << endl;
+   //cout << "Points X\tY" << endl;
+   cout << "Is executed is " << field.is_executed() << endl;
+   vector <Point> & points = field.get_points_reference();
+
+   for (int i = 0; i < field.size(); i++)
+   {
+       //cout << points[i].getx() << " " << points[i].gety() << endl;
+   }
+}
+
+void Controller::loadField(int id)
 {
     try{
+        fields.resize(fields_size + 1);
+        Field &field = fields[fields_size];
+        fields_size++;
         FieldLoader &Loader = DataBaseLoader.getFieldLoader();
         Loader.loadField(field, id);
-        //printFieldParam(field);
+        printFieldPa(field);
         string message = "load field is executed with parameters " + to_string(id);
         logger.info(message);
     }

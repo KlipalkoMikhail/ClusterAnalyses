@@ -238,15 +238,25 @@ void FieldLoader::loadNFC(Field &field, fstream & data_base)
     field.setNFC(nfc);
 }
 
-void printFieldParam(Field &field)
+void printFieldP(Field & field)
 {
-    //vector <Point> &points = field.get_points_reference();
-    cout << "param " << endl;
-    cout << "FID = " << field.getID() << endl;
-    cout << "CENTER = " << field.center.getx() << " " << field.center.gety() << endl;
-    //for (int i = 0; i < field.size(); i++)
-     //   cout << setw(14) << points[i].getx() << " " << points[i].gety() << endl;
-    cout << field.getID() << endl;
+    cout << "ID is " << field.getID() << endl;
+    cout << "Size is " << field.size() << endl;
+    cout << "Center is " << field.center.getx() << ' ' << field.center.gety() << endl;
+    cout << "factors ";
+    cout << field.factors[2] << endl
+         << field.factors[3] << endl
+        << field.factors[4] << endl
+        << field.factors[5] << endl
+        << field.factors[6] << endl
+         << field.factors[7] << endl;
+   cout << "Points X\tY" << endl;
+   vector <Point> & points = field.get_points_reference();
+
+   for (int i = 0; i < field.size(); i++)
+   {
+       cout << points[i].getx() << " " << points[i].gety() << endl;
+   }
 }
 
 void FieldLoader::loadField(Field &field, int id)
@@ -272,7 +282,7 @@ void FieldLoader::loadField(Field &field, int id)
     loadCenter(field, CardField);
     loadEigenVectors(field, CardField);    
     loadPointsFile(field, CardField);
-    //printFieldParam(field);
+    printFieldP(field);
     CardField.close();
 
 

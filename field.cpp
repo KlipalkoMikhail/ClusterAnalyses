@@ -26,7 +26,7 @@ Field::Field()
     isSaved = 0;
     clouds.resize(100);
     points.resize(10000);
-    factors.resize(6);
+    factors.resize(8);
     D.resize(0);
 }
 
@@ -154,7 +154,6 @@ vector <Point> & Field::get_points_reference()
 
 Field::~Field()
 {
-    cout << "Field " << endl;
     vector <Cloud> ().swap(clouds);
     vector <Point> ().swap(points);
     vector <vector <double>> ().swap(D);

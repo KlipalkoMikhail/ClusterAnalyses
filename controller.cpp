@@ -280,8 +280,12 @@ void Controller::saveInFileFindCluster(Field &field, int launchIndex)
     int Knumber = findCluster.getKnumber();
     double Rnumber = findCluster.getRnumber();
     int size = findCluster.getSize();
+    cout << size << endl;
+    cout << field.getID() << ' ' << launchIndex << endl;
+    cout << "get it 283" << endl;
 
     sv.saveResult(findCluster, field);
+    cout << "catch " << endl;
 
     string message = "save find cluster result is executed with parameters " + to_string(launchIndex) + " " +   
                                                                                to_string(field.getID());
@@ -462,10 +466,11 @@ void Controller::loadField(int id)
     try{
         fields.resize(fields_size + 1);
         Field &field = fields[fields_size];
+        field.setID(fields_size);
         fields_size++;
         FieldLoader &Loader = DataBaseLoader.getFieldLoader();
         Loader.loadField(field, id);
-        printFieldPa(field);
+        //printFieldPa(field);
         string message = "load field is executed with parameters " + to_string(id);
         logger.info(message);
     }
@@ -497,14 +502,15 @@ void createClusterFiles(FindCluster &findCluster)
     }
 }
 
-Field & Controller::getFieldByFID(int FID)
+Field & Controller::getFieldByFID(int DBFID)
 {
-    cout << FID << ' ' << fields_size << endl;
+    //cout << FID << ' ' << fields_size << endl;
     int checkedID = -1;
     for (int i = 0; i < fields_size; i++)
     {
-        cout << fields[i].getID() << ' ' << endl;
-        if (fields[i].getID() == FID)
+        int DataBaseFieldIndex = fields[i].getDBID();
+        cout << DataBaseFieldIndex << ' ' << endl;
+        if (DataBaseFieldIndex == DBFID)
         {
             checkedID = i;
             break;
@@ -540,11 +546,18 @@ void Controller::saveFindCluster(int FID, int FCID)
     }
 }
 
-void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, int FieldID)
+void Controller::loadFindCluster(int DBFID, int findClusterID)
 {
     try{
+        Field & field = getFieldByFID(DBFID);
+        if (field.is_executed())
+            throw MyException("Field is not loaded");
+        sv.resizeFindClusters(field.getID() + 1);
+
+        FindCluster & findCluster = sv.getFindCluster(DBFID, findClusterID);
+
         FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
-        Loader.loadFindCluster(findCluster, findClusterID, FieldID);
+        Loader.loadFindCluster(findCluster, findClusterID, DBFID);
         //FindCluster testfindCluster = sv.getFindCluster(0);
         //findCluster.printParameters();
         //testfindCluster.printParameters();
@@ -553,11 +566,11 @@ void Controller::loadFindCluster(FindCluster &findCluster, int findClusterID, in
         vector <Cluster> &findedClusters = findCluster.getFindedClusters();
         int ClusterSize = findCluster.getSize();
         for (int i = 0; i < ClusterSize; i++)
-            findedClusters[i].reserve(fields[FieldID].size());
+            findedClusters[i].reserve(field.size());
         CLoader.loadClusters(findCluster);
 
         string message = "load find cluster is executed with parameters " + to_string(findClusterID) + " " +   
-                                                                        to_string(FieldID);
+                                                                        to_string(DBFID);
         logger.info(message);
     }
     catch(MyException& ex)

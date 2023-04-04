@@ -282,10 +282,8 @@ void FieldLoader::loadField(Field &field, int id)
     loadCenter(field, CardField);
     loadEigenVectors(field, CardField);    
     loadPointsFile(field, CardField);
-    printFieldP(field);
+    //printFieldP(field);
     CardField.close();
-
-
 
 }
 
@@ -323,6 +321,31 @@ void FindClusterLoader::printHeaderLineInFile(fstream &data_base)
     data_base.clear();
 }
 
+void FindClusterLoader::printParametersInFindClusterFile(fstream &data_base, FindCluster &findCluster)
+{
+    string block;
+    cout << endl;
+    cout << findCluster.getDBFID() << endl;
+    block = to_string(findCluster.getDBFID());
+    settings.makeLine(block, settings.getFIDblock_width());
+    data_base << block;
+    block = to_string(findCluster.getID());
+    settings.makeLine(block, settings.getIDblock_width());
+    data_base << block;
+    block = findCluster.getName();
+    settings.makeLine(block, settings.getNMblock_width());
+    data_base << block;
+    block = to_string(findCluster.getSize());
+    settings.makeLine(block, settings.getNblock_width());
+    data_base << block;
+    block = to_string(findCluster.getKnumber());
+    settings.makeLine(block, settings.getKblock_width());
+    data_base << block;
+    block = to_string(findCluster.getRnumber());
+    settings.makeLine(block, settings.getRblock_width());
+    data_base << block << endl;
+}
+
 void check_next(fstream &data_base)
 {
     char c;
@@ -348,6 +371,7 @@ void FindClusterLoader::SeekAndSetAllID(FindCluster &findCluster, int ID, int FI
         data_base.seekg(HeaderLineSize * Index_Line, ios::beg);
         data_base >> fieldID;
         //check_next(data_base);
+
         data_base >> findClusterID;
         if (fieldID != FID) 
         {
@@ -369,6 +393,7 @@ void FindClusterLoader::SeekAndSetAllID(FindCluster &findCluster, int ID, int FI
     }
     findCluster.setID(findClusterID);
     findCluster.setFieldID(fieldID);
+    findCluster.setDBFID(fieldID);
     data_base.seekg(HeaderLineSize*Index_Line + IDblock_width + FIDblock_width, ios::beg);
 }
 
@@ -377,7 +402,7 @@ void FindClusterLoader::loadName(FindCluster &findCluster, fstream &data_base)
     string name;
 
     data_base >> name;
-    //cout << name << endl;
+    cout << name << endl;
     findCluster.setName(name);
 }
 
@@ -385,7 +410,8 @@ void FindClusterLoader::loadSize(FindCluster &findCluster, fstream &data_base)
 {
     int size = 0;
     data_base >> size;
-    //cout << size << endl;
+    cout << size << endl;
+    cout << "it is size" << endl;
     if (data_base.fail())
         cout << "bad size" << endl;
     findCluster.setSize(size);
@@ -395,7 +421,7 @@ void FindClusterLoader::loadKnumber(FindCluster &findCluster, fstream &data_base
 {
     int Knumber = 0;
     data_base >> Knumber;
-    //cout << Knumber << endl;
+    cout << Knumber << endl;
     if (data_base.fail())
         cout << "bad knumber" << endl;
     findCluster.setKnumber(Knumber);
@@ -405,35 +431,10 @@ void FindClusterLoader::loadRnumber(FindCluster &findCluster, fstream &data_base
 {
     double Rnumber = 0;
     data_base >> Rnumber;
-    //cout << Rnumber << endl;
+    cout << Rnumber << endl;
     if (data_base.fail())
         cout << "bad" << endl;
     findCluster.setRnumber(Rnumber);
-}
-
-void FindClusterLoader::printParametersInFindClusterFile(fstream &data_base, FindCluster &findCluster)
-{
-    string block;
-    cout << endl;
-    cout << findCluster.getDBFID() << endl;
-    block = to_string(findCluster.getDBFID());
-    settings.makeLine(block, settings.getFIDblock_width());
-    data_base << block;
-    block = to_string(findCluster.getID());
-    settings.makeLine(block, settings.getIDblock_width());
-    data_base << block;
-    block = findCluster.getName();
-    settings.makeLine(block, settings.getNMblock_width());
-    data_base << block;
-    block = to_string(findCluster.getSize());
-    settings.makeLine(block, settings.getNblock_width());
-    data_base << block;
-    block = to_string(findCluster.getKnumber());
-    settings.makeLine(block, settings.getKblock_width());
-    data_base << block;
-    block = to_string(findCluster.getRnumber());
-    settings.makeLine(block, settings.getRblock_width());
-    data_base << block << endl;
 }
 
 void FindClusterLoader::loadFileSize(fstream &data_base)
@@ -475,6 +476,7 @@ void FindClusterLoader::loadFindCluster(FindCluster &findCluster, int findCluste
     loadSize(findCluster, data_base);
     loadKnumber(findCluster, data_base);
     loadRnumber(findCluster, data_base);
+    cout << "end" << endl;
 
     data_base.close();  
 }
@@ -673,22 +675,35 @@ void ClusterLoader::loadPointsFile(Cluster &findedCluster, fstream &data_base)
 void ClusterLoader::SeekAndSetAllID(FindCluster &findCluster, fstream &data_base)
 {
     int FCID = findCluster.getID();
+    int DBFID = findCluster.getDBFID();
     int findClusterID = 0;
+    int FID = 0;
     int Index_Line = 1;
     int HeaderLineSize = settings.getHEADER_LINE_SIZE();
+
+    cout << "PARAM FID=" << DBFID << " FCID=" << FCID << endl;
 
     data_base.clear();
     for (int i = 1; i < SizeLines; i++)
     {
         data_base.seekg(HeaderLineSize * Index_Line, ios::beg);
+        data_base >> FID;
         data_base >> findClusterID;
-        if (findClusterID != FCID) 
+
+        if (FID != DBFID) 
+        {
+            Index_Line++;
+            continue;
+        }
+        else if (findClusterID != FCID) 
         {
             Index_Line++;
             continue;
         }
         else break;
     }
+
+    cout << "PARAM FID=" << FID << " FCID=" << findClusterID << endl;
     if (data_base.eof())
     {
         cout << "findClusterID is wrong";

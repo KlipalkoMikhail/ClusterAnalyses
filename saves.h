@@ -17,6 +17,9 @@ class Saves
         void saveFindCluster(vector <Cluster> clusters, Field &field, int k, double r, string name);
         vector <Cluster> & get_clusters(int FID, int FCID);
         void saveResult(FindCluster &findCluster, Field &field);
+        void setSize(int sz);
+        int getSize();
+        void resizeFindClusters(int sz);
         int ncluster();
         ~Saves();
 };

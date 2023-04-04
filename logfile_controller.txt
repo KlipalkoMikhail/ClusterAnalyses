@@ -1,0 +1,10 @@
+Tue Apr 04 16:51:41 2023 INFO load field is executed with parameters 0
+Tue Apr 04 16:51:41 2023 INFO load field is executed with parameters 1
+Tue Apr 04 16:51:41 2023 INFO calculated center with parameters 0
+Tue Apr 04 16:51:41 2023 INFO calculated center with parameters 1
+Tue Apr 04 16:51:41 2023 INFO print center is executed with parameters 0
+Tue Apr 04 16:51:41 2023 INFO print center is executed with parameters 1
+Tue Apr 04 16:51:41 2023 ERROR Field is not loaded
+Tue Apr 04 16:51:41 2023 ERROR Field is not loaded
+Tue Apr 04 16:51:41 2023 ERROR Field is not loaded
+Tue Apr 04 16:51:41 2023 ERROR Field is not loaded

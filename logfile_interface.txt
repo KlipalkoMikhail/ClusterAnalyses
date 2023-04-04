@@ -1,0 +1,11 @@
+Tue Apr 04 16:51:41 2023 INFO Requested load field with parameters 0
+Tue Apr 04 16:51:41 2023 INFO Requested load field with parameters 1
+Tue Apr 04 16:51:41 2023 INFO Requested calculate center with parameters 0
+Tue Apr 04 16:51:41 2023 INFO Requested calculate center with parameters 1
+Tue Apr 04 16:51:41 2023 INFO Requested print center with parameters 0
+Tue Apr 04 16:51:41 2023 INFO Requested print center with parameters 1
+Tue Apr 04 16:51:41 2023 INFO Requested load find cluster with parameters 0 0
+Tue Apr 04 16:51:41 2023 INFO Requested load find cluster with parameters 0 1
+Tue Apr 04 16:51:41 2023 INFO Requested load find cluster with parameters 1 0
+Tue Apr 04 16:51:41 2023 INFO Requested load find cluster with parameters 1 1
+Tue Apr 04 16:51:41 2023 INFO Requested find cluster with parameters 0 0

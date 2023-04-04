@@ -356,18 +356,18 @@ void Interface::request_is_load_field()
 void Interface::request_is_load_find_cluster()
 {
     int field_index = 0;
-    int findClusterIndex = 0;
+    int findcluster_index = 0;
 
     cout << "Enter field index (starts with 0)\n";
     cin >> field_index;
     cout << "Field index = " << field_index << endl;
     cout << "Enter findcluster index (starts with 0)\n";
-    cin >> findClusterIndex;
-    cout << "findcluster index = " << findClusterIndex << endl;
+    cin >> findcluster_index;
+    cout << "findcluster index = " << findcluster_index << endl;
 
-    string message = "Requested load find cluster with parameters " + to_string(field_index) + " " + to_string(findClusterIndex);
+    string message = "Requested load find cluster with parameters " + to_string(field_index) + " " + to_string(findcluster_index);
     logger.info(message);
-    controller.loadFindCluster(controller.sv.getFindCluster(field_index, findClusterIndex), findClusterIndex, field_index);
+    controller.loadFindCluster(field_index, findcluster_index);
 }
 
 void Interface::request_is_save_find_cluster()

@@ -10,7 +10,8 @@ void saveDataInFiles(FindCluster &findCluster, Field &field)
     int FCID = findCluster.getID();
 
     //findCluster.printParameters();
-    //cout << ClusterSize << endl;
+    cout << ClusterSize << endl;
+
     ofstream fout;
     string filename;
     for (int i = 0; i < ClusterSize; i++)
@@ -45,6 +46,7 @@ void printInTextFileGNUPlotCommands(FindCluster &findCluster)
 void Saves::saveResult(FindCluster &findCluster, Field &field)
 {
     saveDataInFiles(findCluster, field);
+    cout << "eg" << endl;
     printInTextFileGNUPlotCommands(findCluster);
 }
  
@@ -144,4 +146,26 @@ vector <vector <FindCluster>> &Saves::getFindClusters()
 FindCluster & Saves::getFindCluster(int FID, int FCID)
 {
     return findClusters[FID][FCID];
+}
+
+void Saves::setSize(int sz)
+{
+    size = sz;
+}
+
+int Saves::getSize()
+{
+    return size;
+}
+
+void Saves::resizeFindClusters(int sz)
+{
+    if (size < sz)
+    {
+        findClusters.resize(sz);
+        size = sz;
+        findClusters[sz - 1].resize(findClusters[sz - 1].size() + 1);
+    }
+    else 
+        findClusters[sz - 1].resize(findClusters[sz - 1].size() + 1);
 }

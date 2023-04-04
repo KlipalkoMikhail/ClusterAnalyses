@@ -1,17 +1,17 @@
-LOAD_FIELD 0
-LOAD_FIELD 1
-CALCEN 0
-CALCEN 1
-PRCEN 0
-PRCEN 1
-LOAD_FINDC 0 0
-LOAD_FINDC 0 1
-LOAD_FINDC 1 0
-LOAD_FINDC 1 1
-RESULT 0 0
-RESULT 0 1
-RESULT 1 0
-RESULT 1 1
-PRFIELD 0
-PRFIELD 1
-EXIT
+load_field 0
+load_field 1
+find_center 0
+find_center 1
+print_center 0
+print_center 1
+load_find_cluster 0 0
+load_find_cluster 0 1
+load_find_cluster 1 0
+load_find_cluster 1 1
+print_result 0 0
+print_result 0 1
+print_result 1 0
+print_result 1 1
+print_field 0
+print_field 1
+exit

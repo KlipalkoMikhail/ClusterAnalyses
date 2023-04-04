@@ -78,11 +78,28 @@ int FindCluster::getDBFID()
 
 void FindCluster::printParameters()
 {
-    cout << "Parameters of FindClusters" << endl;
-    cout << "ID " << ID << endl;
-    cout << "FieldID " << FieldID << endl;
-    cout << "Name " << name << endl;
-    cout << "Size " << size << endl;
-    cout << "K " << Knumber << endl;
-    cout << "R " << Rnumber << endl;
+    cout << "findCluster: ";
+    cout     << "ID " << ID;
+    cout     << " FieldID " << FieldID
+         << " DBFID " << DBFID
+         << " Name " << name
+         << " Size " << size
+         << " K " << Knumber
+         << " R " << Rnumber << endl;
+}
+
+FindCluster::FindCluster()
+{
+    state = 0;
+    size = 0;
+}
+
+void FindCluster::setState(int st)
+{  
+    this -> state = st;
+}
+
+int FindCluster::getState()
+{
+    return state;
 }

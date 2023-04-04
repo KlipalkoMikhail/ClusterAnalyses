@@ -1,10 +1,4 @@
-Tue Apr 04 16:51:41 2023 INFO load field is executed with parameters 0
-Tue Apr 04 16:51:41 2023 INFO load field is executed with parameters 1
-Tue Apr 04 16:51:41 2023 INFO calculated center with parameters 0
-Tue Apr 04 16:51:41 2023 INFO calculated center with parameters 1
-Tue Apr 04 16:51:41 2023 INFO print center is executed with parameters 0
-Tue Apr 04 16:51:41 2023 INFO print center is executed with parameters 1
-Tue Apr 04 16:51:41 2023 ERROR Field is not loaded
-Tue Apr 04 16:51:41 2023 ERROR Field is not loaded
-Tue Apr 04 16:51:41 2023 ERROR Field is not loaded
-Tue Apr 04 16:51:41 2023 ERROR Field is not loaded
+Tue Apr  4 23:49:39 2023 INFO load field is executed with parameters 0
+Tue Apr  4 23:49:43 2023 INFO load field is executed with parameters 4
+Tue Apr  4 23:49:50 2023 INFO load field is executed with parameters 3
+Tue Apr  4 23:50:02 2023 INFO load find cluster is executed with parameters 0 3

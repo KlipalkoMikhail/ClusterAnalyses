@@ -223,6 +223,11 @@ void Interface::request_is_find_cluster()
     controller.saveInFileFindCluster(controller.fields[field_index], algorithm_index);
 }
 
+void Interface::request_is_print_launches()
+{
+    controller.print_launches();
+}
+
 void Interface::request_is_print_center()
 {
     int field_index = 0;
@@ -454,6 +459,8 @@ int Interface::Starts()
         request_is_load_find_cluster();
     else if (request == commands.PRINT_ACTIVE_FIELDS)
         request_is_print_active_fields();
+    else if (request == commands.PRINT_LAUNCHES)
+        request_is_print_launches();
     else if (request == commands.EXIT)
     {
         request_is_exit_string();

@@ -10,31 +10,32 @@ using namespace std;
 class Commands
 {
 public:
-    string CLOUD_CREATE = "CRCLOUD";
-    string CLOUD_PRINT = "PRCLOUD";
-    string FIELD_PRINT = "PRFIELD";
-    string WAVE = "WAVE";
-    string DBSCAN = "DBSCAN";
-    string K_MEANS = "KMEANS";
-    string EXP_MAX = "EXPMAX";
-    string FACT_PRINT = "PRFACT";
-    string FACT_CALC = "CALFACT";
-    string CENT_CALC = "CALCEN";
-    string RESULT = "RESULT";
-    string CENT_PRINT = "PRCEN";
-    string COPY_BUFF = "BUFFCPY";
-    string PAST_BUFF = "BUFFPST";
-    string MOVE_BUFF = "BUFFMOV";
-    string ROTATE_BUFF = "BUFFROT";
-    string PRINT_BUFF = "BUFFPRC";
-    string SPAN_TREE = "SPANTRE";
-    string SAVE_FIELD = "SAVE_FIELD";
-    string LOAD_FIELD = "LOAD_FIELD";
-    string SAVE_FINDC = "SAVE_FINDC";
-    string LOAD_FINDC = "LOAD_FINDC";
-    string EXIT = "EXIT";
-    string HELP = "HELP";
-    string PRINT_ACTIVE_FIELDS = "PRINT_ACTIVE_FIELDS";
+    string CLOUD_CREATE = "create_cloud";
+    string CLOUD_PRINT = "print_cloud";
+    string FIELD_PRINT = "print_field";
+    string WAVE = "turn_wave";
+    string DBSCAN = "turn_dbscan";
+    string K_MEANS = "turn_kmeans";
+    string EXP_MAX = "turn_expmax";
+    string FACT_PRINT = "print_factors";
+    string FACT_CALC = "find_factors";
+    string CENT_CALC = "find_center";
+    string RESULT = "print_result";
+    string CENT_PRINT = "print_center";
+    string COPY_BUFF = "copy_buffer";
+    string PAST_BUFF = "past_buffer";
+    string MOVE_BUFF = "move_buffer";
+    string ROTATE_BUFF = "rotate_buffer";
+    string PRINT_BUFF = "print_buffer";
+    string SPAN_TREE = "turn_spantree";
+    string SAVE_FIELD = "save_field";
+    string LOAD_FIELD = "load_field";
+    string SAVE_FINDC = "save_find_cluster";
+    string LOAD_FINDC = "load_find_cluster";
+    string EXIT = "exit";
+    string HELP = "help";
+    string PRINT_ACTIVE_FIELDS = "print_active_fields";
+    string PRINT_LAUNCHES = "print_launches";
 };
 
 class InterfaceSettings
@@ -88,6 +89,7 @@ class Interface
         void request_is_save_find_cluster();
         void request_is_exit_string();
         void request_is_print_active_fields();
+        void request_is_print_launches();
         ~Interface();
 
 };

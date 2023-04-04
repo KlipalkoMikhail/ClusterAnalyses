@@ -11,32 +11,33 @@ class FindCluster
         int ID;
         int FieldID;
         int DBFID;
-        std::vector <Cluster> findedClusters;
         int size;
         int Knumber;
+        int state;
         double Rnumber;
+        std::vector <Cluster> findedClusters;
         std::string name; 
     public:
-        FindCluster()
-        {
-            findedClusters.resize(100);
-        }
+        FindCluster();
         int getID();
         int getFieldID();
         int getSize();
         int getKnumber();
         int getDBFID();
-        vector <Cluster> &getFindedClusters();
+        int getState();
         double getRnumber();
-        std::string getName();
         void setID(int id);
         void setFieldID(int id);
+        void setState(int state);
         void setSize(int sz);
         void setKnumber(int k);
         void setRnumber(double r);
         void setName(std::string nm);
         void setDBFID(int dbfid);
         void printParameters();
+        vector <Cluster> &getFindedClusters();
+        std::string getName();
+        
 };
 
 #endif

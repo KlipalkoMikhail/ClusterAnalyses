@@ -41,6 +41,7 @@ class Controller
         void loadField(int id);
         void saveFindCluster(int FID, int FCID);
         void loadFindCluster(int fieldID, int findClusterID);
+        void print_launches();
         void printActiveFields();
         Field & getFieldByFID(int FID);
         ~Controller();

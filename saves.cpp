@@ -46,13 +46,15 @@ void printInTextFileGNUPlotCommands(FindCluster &findCluster)
 void Saves::saveResult(FindCluster &findCluster, Field &field)
 {
     saveDataInFiles(findCluster, field);
-    cout << "eg" << endl;
     printInTextFileGNUPlotCommands(findCluster);
 }
- 
-int Saves::ncluster()
+
+void Saves::printLaunches()
 {
-    return findClusters.size();
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < static_cast <int> (findClusters.size()); j++)
+            if (findClusters[i][j].getState() != 0)
+                findClusters[i][j].printParameters();
 }
 
 Saves::Saves()
@@ -89,15 +91,10 @@ void Saves::saveFindCluster(vector <Cluster> clusters, Field &field, int k, doub
     int FID = field.getID();
     int DBFID = field.getDBID();
     int FCID = field.getNFC();
-
-    if (FID == size)
-    {
-        size++;
-        findClusters.resize(size);
-    }
-    else if (FID > size) throw MyException("Wrong FID in saving find clusters");
-
-    findClusters[FID].resize(findClusters[FID].size() + 1);
+    int isSaved = 1;
+    //cout << FID << ' ' << DBFID << ' ' << FCID << endl;
+    resizeFindClusters(FID + 1);
+    findClusters[FID].resize(FCID + 1);
 
     vector <Cluster> &findedClusters = findClusters[FID][FCID].getFindedClusters();
     int ClustersSize = clusters.size();
@@ -112,18 +109,13 @@ void Saves::saveFindCluster(vector <Cluster> clusters, Field &field, int k, doub
     }
     
     findClusters[FID][FCID].setName(name);
-    //cout << name << endl;
     findClusters[FID][FCID].setID(FCID);
     findClusters[FID][FCID].setDBFID(DBFID);
-    //cout << size << endl;
     findClusters[FID][FCID].setFieldID(FID);
-    //cout << FieldID << endl;
     findClusters[FID][FCID].setKnumber(k);
-    //cout << k << endl;
     findClusters[FID][FCID].setRnumber(r);
-    //cout << r << endl;
     findClusters[FID][FCID].setSize(ClustersSize);
-    //cout << ClustersSize << endl;
+    findClusters[FID][FCID].setState(isSaved);
     field.setNFC(field.getNFC() + 1);
 }
 

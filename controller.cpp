@@ -83,6 +83,7 @@ void Controller::k_means(int k, Field &field)
     string name = "K-means";
     try{
         vector <Cluster> findedClusters = exec.kmeans.k_means(k, field);
+        //sv.resizeFindClusters(field.getID() + 1);
         sv.saveFindCluster(findedClusters, field, k, 0, name);
         string message = "Kmeans is executed with parameters " + to_string(k) + " " + to_string(field.getID());
         logger.info(message);
@@ -164,6 +165,10 @@ void Controller::exp_max(int k, Field &field)
     Status_Work = 2;
 }
 
+void Controller::print_launches()
+{
+    sv.printLaunches();
+}
 
 void Controller::print_field(Field &field)
 {
@@ -174,21 +179,13 @@ void Controller::print_field(Field &field)
         cout << "Field is not created\n" << endl;
         return;
     }
-    else
-    {
-        cout << " X " << "\t\t\t" << " Y " << endl;
-        for (int i = 0; i < field.size(); i++)
-        {
-            cout << field.getx_p(i) << "\t\t";
-            cout << field.gety_p(i) << endl;
-        }
-    }
 
     // сохраняем поле в файл
     field.file_save();
 
     // сохраняем результаты в лог-файл контроллера
     string message = "print field is executed with parameters " + to_string(field.getID());
+    cout << message;
     logger.info(message);
 }
 
@@ -280,12 +277,8 @@ void Controller::saveInFileFindCluster(Field &field, int launchIndex)
     int Knumber = findCluster.getKnumber();
     double Rnumber = findCluster.getRnumber();
     int size = findCluster.getSize();
-    cout << size << endl;
-    cout << field.getID() << ' ' << launchIndex << endl;
-    cout << "get it 283" << endl;
 
     sv.saveResult(findCluster, field);
-    cout << "catch " << endl;
 
     string message = "save find cluster result is executed with parameters " + to_string(launchIndex) + " " +   
                                                                                to_string(field.getID());
@@ -548,23 +541,28 @@ void Controller::saveFindCluster(int FID, int FCID)
 
 void Controller::loadFindCluster(int DBFID, int findClusterID)
 {
+    cout.unsetf(ios::showpos);
+    cout << "Loading find clusters DBFID=" << DBFID << " FCID=" << findClusterID << endl;
     try{
         Field & field = getFieldByFID(DBFID);
-        if (field.is_executed())
+        int FID = field.getID();
+        if (!field.is_executed())
             throw MyException("Field is not loaded");
-        sv.resizeFindClusters(field.getID() + 1);
+        sv.resizeFindClusters(FID + 1); 
 
-        FindCluster & findCluster = sv.getFindCluster(DBFID, findClusterID);
+        FindCluster & findCluster = sv.getFindCluster(FID, findClusterID);
 
         FindClusterLoader &Loader = DataBaseLoader.getFindClusterLoader();
         Loader.loadFindCluster(findCluster, findClusterID, DBFID);
         //FindCluster testfindCluster = sv.getFindCluster(0);
+
         //findCluster.printParameters();
         //testfindCluster.printParameters();
 
         ClusterLoader &CLoader = DataBaseLoader.getClusterLoader();
         vector <Cluster> &findedClusters = findCluster.getFindedClusters();
         int ClusterSize = findCluster.getSize();
+        findedClusters.resize(ClusterSize);
         for (int i = 0; i < ClusterSize; i++)
             findedClusters[i].reserve(field.size());
         CLoader.loadClusters(findCluster);

@@ -110,6 +110,7 @@ bool Field::is_executed()
 {
     return state_work;
 }
+
 vector <Cloud> *Field::get_cl()
 {
     return &clouds;

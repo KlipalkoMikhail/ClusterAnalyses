@@ -93,4 +93,7 @@ int Cluster::getFieldSize()
     return blong.size();
 }
 
-Cluster::~Cluster(){}
+Cluster::~Cluster()
+{
+    vector <short int> ().swap(blong);
+}

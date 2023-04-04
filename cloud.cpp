@@ -154,8 +154,9 @@ vector <Point> Cloud::get_points() const
         p[i] = *points[i];
     return p;
 }
+
 Cloud::~Cloud()
 {
     points.clear();
     factors.clear();
-}                      // ����������
+}                    

@@ -6,10 +6,12 @@
 #include <iomanip>
 #include "controller.h"
 #include <iterator>
+#include <utility>
 #include "factors.h"
 #include "exec.h"
 #include <list>
 #include <cmath>
+#include <stack>
 #define EPSILON 0.000001
 
 void printFieldParam(Field &field);
@@ -292,7 +294,7 @@ void Controller::print_clouds(Field &field)
 {
     vector <Cloud> clouds = *(field.get_cl());
 
-    int k = field.nclouds();
+    int k = field.getCloudsSize();
     cout << k << endl;
 
     ofstream *fout = new ofstream[k];
@@ -320,7 +322,7 @@ void Controller::calculate_factor(int k, Field &field)
     }
     if (k == 1)
     {
-        for (int i = 0; i < field.nclouds(); i++)
+        for (int i = 0; i < field.getCloudsSize(); i++)
             (field.get_cloud(i)).factors = exec.factors.calculate_factors((field.get_cloud(i)).get_points());
     }
     if (k == 2)
@@ -353,15 +355,15 @@ void Controller::print_factors(int m, Field &field)
 {
     if (m == 1)
     {
-        vector <Cloud> cloud(field.nclouds());
-        for (int j = 0 ; j < field.nclouds(); j++)
+        vector <Cloud> cloud(field.getCloudsSize());
+        for (int j = 0 ; j < field.getCloudsSize(); j++)
         {
             Cloud & cld = field.get_cloud(j);
             cloud[j].factors = cld.factors;
         }
         ofstream cloudo;
         cloudo.open("cloud_factors.dat");
-        for (int i = 0; i < field.nclouds(); i++)
+        for (int i = 0; i < field.getCloudsSize(); i++)
         {
             cloudo << "set arrow 1 from " << cloud[i].factors[0] << " to " << cloud[i].factors[1] << endl;
             cloudo << "set arrow 1 from " << cloud[i].factors[0] + cloud[i].factors[2] << "\t" << cloud[i].factors[1] + cloud[i].factors[3] << endl;
@@ -607,4 +609,110 @@ void Controller::print_center(Field &field)
     cout << "Center is (" << setprecision(6) << field.center.getx() << " " << field.center.gety() << ")" << endl;
     string message = "print center is executed with parameters " + to_string(field.getID());
     logger.info(message);
+}
+
+double d(Cluster x, Cluster y)
+{
+    return distance(x.getCenter(), y.getCenter());
+}
+
+void initAndFillClusters(vector <Cluster> &clusters, Field &field)
+{
+    int N = field.size();
+    for (int i = 0; i < static_cast <int> clusters.size(); i++)
+    {
+        Cluster & cluster = clusters[i];
+        cluster.reserve(N);
+        cluster.add_p(i);
+        cluster.ccenter(field.get_points_reference(), N);
+    }
+}
+
+void initMatrix(vector <vector <double>> &A, vector <Cluster> &clusters)
+{
+    int N = static_cast <int> clusters.size();
+    A.resize(N);
+    for(int i = 0; i < N; i++)
+        A[i].resize(N);
+    for (int i = 0; i < N; i++)
+        for (int j = i + 1; j < N; j++)
+            A[i][j] = d(clusters[i], clusters[j]);
+}
+
+void uniteClusters(Cluster &x, Cluster &y)
+{
+    int sizeRemnant = 0;
+    Point newCenter, oldCenter_x = x.getCenter(), oldCenter_y = y.getCenter();
+    newCenter.setx((oldCenter_x.getx() + oldCenter_y.getx())/2);
+    newCenter.sety((oldCenter_x.gety() + oldCenter_y.gety())/2);
+
+    for (int i = 0; i < static_cast <int> blong.size(); i++)
+    {
+        if (y.tr(i) && !x.tr(i))
+        {
+            x.add_p(i);
+            sizeRemnant++;
+        }
+    }
+    x.setCenter(newCenter);
+    x.setSize(x.getSize() + sizeRemnant);
+    return x;
+}
+
+pair <int, int> findMinimalClusters(vector <vector <double>> &A)
+{
+    pair <int, int> minimals = {0, 0};
+    int N = static_cast <int> A.size();
+    if (N == 1) return minimals
+    else
+    {
+        double min = A[0][1];
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = i + 1; j < N; j++)
+            {
+                if (min >= A[i][j])
+                {
+                    min = A[i][j];
+                    minimals.first = i;
+                    minimals.second = j;
+                }
+            }
+        }
+    }
+    return minimals;
+}
+
+void eraseColumn(vector <vector <double>> DistanceMatrix, int j)
+{
+    for (int i = 0; i < static_cast <int> DistanceMatrix[0].size(); i++)
+        DistanceMatrix.erase(DistanceMatrix.begin() + j);
+}
+
+void Controller::hierarchical(Field &field)
+{
+    int N = field.size();
+    vector <vector <double>> DistanceMatrix;
+    vector <Cluster> clusters(N);
+    pair <int, int> minimalDistanceClustersIndex;
+    pair <Cluster, Cluster> minimalDistanceClusters;
+    stack <pair <Cluster, Cluster>> hierarchicalStack;
+
+    initAndFillClusters(clusters, field);
+    initMatrix(DistanceMatrix, N);
+
+    while (N != 1)
+    {
+        minimalDistanceClustersIndex = findMinimalClusters(DistanceMatrix);
+        minimalDistanceClusters.first = clusters[minimalDistanceClustersIndex.first];
+        minimalDistanceClusters.second = clusters[minimalDistanceClustersIndex.second];
+
+        hierarchicalStack.push(minimalDistanceClusters);
+        uniteClusters(minimalDistanceClusters.first, minimalDistanceClusters.second);
+
+        eraseColumn(DistanceMatrix, minimalDistanceClustersIndex.second);
+        clusters.erase(clusters.begin() + minimalDistanceClustersIndex.second);
+        N--;
+        cout << "N " << N << " done" << endl;
+    }
 }

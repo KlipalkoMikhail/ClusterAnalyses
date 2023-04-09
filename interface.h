@@ -36,6 +36,7 @@ public:
     string HELP = "help";
     string PRINT_ACTIVE_FIELDS = "print_active_fields";
     string PRINT_LAUNCHES = "print_launches";
+    string turn_hier = "turn_hier"
 };
 
 class InterfaceSettings

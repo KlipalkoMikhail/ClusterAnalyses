@@ -102,7 +102,7 @@ int Field::size()
 {
     return N;
 }
-int Field::nclouds()
+int Field::getCloudsSize()
 {
     return NCL;
 }

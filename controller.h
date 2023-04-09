@@ -42,6 +42,7 @@ class Controller
         void saveFindCluster(int FID, int FCID);
         void loadFindCluster(int fieldID, int findClusterID);
         void print_launches();
+        void Controller::hierarchical(Field &field);
         void printActiveFields();
         Field & getFieldByFID(int FID);
         ~Controller();

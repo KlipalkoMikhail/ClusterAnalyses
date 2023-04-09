@@ -461,6 +461,8 @@ int Interface::Starts()
         request_is_print_active_fields();
     else if (request == commands.PRINT_LAUNCHES)
         request_is_print_launches();
+    else if (request == commands.turn_hier)
+        request_is_turn_hier();
     else if (request == commands.EXIT)
     {
         request_is_exit_string();

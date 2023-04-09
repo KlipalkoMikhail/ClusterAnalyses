@@ -1,29 +1,86 @@
 List of the possible commands:
 
-CRCLOUD N X Y GX GY - creates a cloud of points with normal distribution,
-	              N - number of points, X - x-coordinate of the center
-                      of cloud, Y - y-coordinate of the center of cloud
-                      gx - variance in X axis, gy - variance in Y axis
-PRCLOUD - prints the cloud of points with normal distribution
-PRFIELD - prints the field of points
-WAVE - turns WAVE algorithm
-DBSCAN - turns DBscan algorithm
-KMEANS - turns k-means algrotihm
-EXPMAX - turns EM algorithm
-BUFFMOV - shift a cloud
-BUFFPST - past a cloud
-BUFFCPY - copy a cloud
-BUFFROT - rotate a cloud
-BUFFPRC - print a buffer cloud
-CALFACT - calculates the factors of the object
-PRFACT - prints the factors of the object
-CALCEN - calculates the center of the object
-SPANTRE - turns the spanning tree
-PRCEN - prints the center of the object
-RESULT - to see result of the algorithm
-SAVE_FIELD - save field in data base
-LOAD_FIELD - load field from data base
-SAVE_FINDC - save find cluster in data base
-LOAD_FINDC - load find cluster in data base
-HELP - print all of possible commands
-EXIT - ends off the programm
+create_cloud FIELD_INDEX SIZE CEN_X CEN_Y GX GY
+--creates a cloud of points with normal distribution, 
+        FIELD_INDEX - index of field
+        SIZE - number of points, CEN_X - x-coordinate of the center
+        of cloud, CEN_Y - y-coordinate of the center of cloud
+        GX - variance in X axis, GY - variance in Y axis
+        
+print_cloud FIELD_INDEX CLOUD_INDEX
+--prints the cloud of points with normal distribution
+
+print_field FIELD_INDEX
+--prints the field of points
+
+print_active_fields NO_ARGUMENTS
+--prints active fields
+
+print_center FIELD_INDEX
+--prints the center of the field
+
+print_launches
+--prints find clusters
+
+print_result FIELD_INDEX FIND_CLUSTER_INDEX
+--prints result of the algorithm
+
+print_factors FIELD_INDEX OBJECT_CODE
+--prints factors of the object (0 - Field, 1 - Cloud, 2 - Cluster)
+
+find_factors FIELD_INDEX OBJECT_CODE (0 - Field, 1 - Cloud, 2 - Cluster)
+--calculates the factors of the object
+
+find_center FIELD_INDEX OBJECT_CODE (0 - Field, 1 - Cloud, 2 - Cluster)
+--calculates the center of the object
+
+turn_wave FIELD_INDEX MODE
+--turns wave algorithm
+
+turn_dbscan FIELD_INDEX K_NEIGHBORS MODE
+--turns dbscan algorithm
+
+turn_kmeans FIELD_INDEX K_CLUSTERS
+--turns k-means algrotihm
+
+turn_expmax FIELD_INDEX K_CLUSTERS
+--turns expectation-maximization algorithm
+
+turn_spantree FIELD_INDEX
+--turns the spanning tree algorithm
+
+turn_hier FIELD_INDEX
+--turns the hierarhical algorithm
+
+copy_buffer FIELD_INDEX CLOUD_INDEX
+--copys a cloud
+
+past_buffer FIELD_INDEX CLOUD_INDEX
+--pasts a cloud
+
+move_buffer FIELD_INDEX CLOUD_INDEX
+--shifts a cloud
+
+rotate_buffer FIELD_INDEX CLOUD_INDEX
+--rotates a cloud
+
+print_buffer NO_ARGUMENTS
+--prints the cloud in the buffer
+
+save_field FIELD_INDEX
+--saves field in data base
+
+load_field FIELD_INDEX
+--loads field from data base
+
+save_find_cluster FIELD_INDEX FIND_CLUSTER_INDEX
+--saves find cluster in data base
+
+load_find_cluster FIELD_INDEX FIND_CLUSTER_INDEX
+--loads find cluster in data base
+
+help NO_ARGUMENTS
+--print all of possible commands
+
+exit NO_ARGUMENTS
+--ends off the programm

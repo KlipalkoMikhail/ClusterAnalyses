@@ -1,0 +1,13 @@
+create_cloud 0 250 0 0 2 1
+create_cloud 1 250 1 1 1 1
+turn_kmeans 0 3
+turn_dbscan 0 3 1.85
+find_factors 0 0
+find_factors 1 0
+find_center 0
+find_center 1
+save_field 0
+save_field 1
+save_find_cluster 0 0
+save_find_cluster 1 0
+exit

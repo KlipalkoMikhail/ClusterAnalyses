@@ -8,42 +8,44 @@
 #define EPSILON 0.000001
 #include "controller.h"
 
-int Cloud::get_np() const
+int Cloud::getID() const
 {
-    return NP;
+    return ID;
 }
 
-Cloud::Cloud(const Cloud& cloud)
+Cloud::Cloud(const Cloud &cloud)
 {
-    try{
-    N = cloud.size();
-    NP = cloud.get_np();
-    points.clear();
-    points.resize(N);
-    vector <Point> points_of_cloud = cloud.get_points();
-    for (size_t i; i < points.size(); i++)
+    try
     {
-        points[i] = new Point;
-        (*points[i]).setx(points_of_cloud[i].getx());
-        (*points[i]).sety(points_of_cloud[i].gety());
-        (*points[i]).setnp(points_of_cloud[i].getNP());
-        (*points[i]).setc(points_of_cloud[i].getColour());
-    }
+        N = cloud.getSize();
+        ID = cloud.getID();
+        points.clear();
+        points.resize(N);
+        vector<Point> points_of_cloud = cloud.getPoints();
+        for (size_t i; i < points.size(); i++)
+        {
+            points[i] = new Point;
+            (*points[i]).setx(points_of_cloud[i].getx());
+            (*points[i]).sety(points_of_cloud[i].gety());
+            (*points[i]).setnp(points_of_cloud[i].getNP());
+            (*points[i]).setc(points_of_cloud[i].getColour());
+        }
     }
     catch (std::bad_alloc &e)
     {
         throw new MyException(EC_MEMORY, "Cannot get memory\n");
-    }    
+    }
 }
 
-const Cloud & Cloud::operator=(const Cloud & cloud)
+const Cloud &Cloud::operator=(const Cloud &cloud)
 {
-    try{
-        N = cloud.size();
-        NP = cloud.get_np();
+    try
+    {
+        N = cloud.getSize();
+        ID = cloud.getID();
         points.clear();
         points.resize(N);
-        vector <Point> points_of_cloud = cloud.get_points();
+        vector<Point> points_of_cloud = cloud.getPoints();
         state_work = cloud.state_work;
         center = cloud.center;
         factors = cloud.factors;
@@ -52,7 +54,9 @@ const Cloud & Cloud::operator=(const Cloud & cloud)
             *(points[i]) = points_of_cloud[i];
         }
         cout << 1;
-    } catch (std::bad_alloc &e) {
+    }
+    catch (std::bad_alloc &e)
+    {
         throw new MyException(EC_MEMORY, "Cannot get memory\n");
     }
 
@@ -68,7 +72,7 @@ void Cloud::resize(int n)
     }
 }
 
-void Cluster::ccenter(std::vector <Point> &points, int N)
+void Cluster::ccenter(std::vector<Point> &points, int N)
 {
     double xmean = 0;
     double ymean = 0;
@@ -78,44 +82,45 @@ void Cluster::ccenter(std::vector <Point> &points, int N)
     {
         ln += blong[i];
     }
-    xmean = scalx(points, blong, N)/ln;
-    ymean = scaly(points, blong, N)/ln;
+    xmean = scalx(points, blong, N) / ln;
+    ymean = scaly(points, blong, N) / ln;
 
     center.setx(xmean);
     center.sety(ymean);
     center.setc(colour);
 }
 
-void Cloud::set_cen(double x, double y)
+void Cloud::setCenter(double x, double y)
 {
     center.setx(x);
     center.sety(y);
 }
 
-void Cloud::set_par_to_p(Point *p, int k)
+void Cloud::setPointByID(Point *p, int k)
 {
     points[k] = p;
 }
-void Cloud::set_x_in_p(double x, int k)
+
+void Cloud::setXinPointByID(double x, int k)
 {
     (*points[k]).setx(x);
 }
-void Cloud::set_y_in_p(double y, int k)
+void Cloud::setYinPointByID(double y, int k)
 {
     (*points[k]).sety(y);
 }
 
-double Cloud::getx_p(int k)
+double Cloud::getXofPoint(int k)
 {
     return (*(points[k])).getx();
 }
 
-double Cloud::gety_p(int k)
+double Cloud::getYofPoint(int k)
 {
     return (*(points[k])).gety();
 }
 
-int Cloud::getnp_p(int k)
+int Cloud::getNPofPoint(int k)
 {
     return (*(points[k])).getNP();
 }
@@ -129,27 +134,27 @@ Cloud::Cloud()
     factors.resize(6);
 }
 
-int Cloud::size() const
+int Cloud::getSize() const
 {
     return N;
 }
 
-bool Cloud::work() const
+bool Cloud::is_executed() const
 {
     return state_work;
 }
 
-void Cloud::create_space(int n, int np) // ������������
+void Cloud::generate(int n, int np) // ������������
 {
     N = n;
     state_work = 1;
-    NP = np;
+    ID = np;
     points.resize(N);
 }
 
-vector <Point> Cloud::get_points() const
+vector<Point> Cloud::getPoints() const
 {
-    vector <Point> p(N);
+    vector<Point> p(N);
     for (int i = 0; i < N; i++)
         p[i] = *points[i];
     return p;
@@ -159,4 +164,4 @@ Cloud::~Cloud()
 {
     points.clear();
     factors.clear();
-}                    
+}

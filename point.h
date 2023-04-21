@@ -11,6 +11,7 @@ class Point
     public:
         Point();
         Point(const Point& point);
+        Point(double x, double y);
         void setx(double x1);
         void sety(double x2);
         void setnp(int np);

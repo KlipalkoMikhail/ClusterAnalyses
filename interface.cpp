@@ -255,7 +255,7 @@ void Interface::request_is_buffer_copy()
 
     string message = "Requested buffer copy with parameters " + to_string(field_index) + " " + to_string(cloud_index);
     logger.info(message);
-    controller.buffer.copy(controller.fields[field_index].get_cloud(cloud_index));
+    controller.buffer.copy(controller.fields[field_index].getCloudReference(cloud_index));
 }
 
 void Interface::request_is_buffer_past()
@@ -289,7 +289,7 @@ void Interface::request_is_buffer_move()
 
     string message = "Requested buffer move with parameters " + to_string(field_index) + " " + to_string(cloud_index) + " " + to_string(x) + " " + to_string(y);
     logger.info(message);
-    controller.buffer.shift(controller.fields[field_index].get_cloud(cloud_index), x, y);
+    controller.buffer.shift(controller.fields[field_index].getCloudReference(cloud_index), x, y);
 }
 
 void Interface::request_is_buffer_rotate()
@@ -310,7 +310,7 @@ void Interface::request_is_buffer_rotate()
 
     string message = "Requested buffer rotate with parameters " + to_string(field_index) + " " + to_string(cloud_index) + " " + to_string(angle);
     logger.info(message);
-    controller.buffer.rotate(controller.fields[field_index].get_cloud(cloud_index), angle);
+    controller.buffer.rotate(controller.fields[field_index].getCloudReference(cloud_index), angle);
 }
 
 void Interface::request_is_buffer_print()
@@ -390,6 +390,19 @@ void Interface::request_is_save_find_cluster()
     string message = "Requested save find cluster with parameters " + to_string(field_index) + " " + to_string(findClusterIndex);
     logger.info(message);
     controller.saveFindCluster(field_index, findClusterIndex);
+}
+
+void Interface::request_is_turn_hier()
+{
+    int field_index = 0;
+
+    cout << "Enter field index (starts with 0)\n";
+    cin >> field_index;
+    cout << "Field index = " << field_index << endl;
+
+    string message = "Requested turn hierarhical algorithm with parameters " + to_string(field_index);
+    logger.info(message);
+    controller.hierarchical(field_index);
 }
 
 void Interface::request_is_exit_string()

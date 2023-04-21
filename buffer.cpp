@@ -14,12 +14,12 @@ Buffer::~Buffer(){}
 
 void Buffer::shift(Cloud &cld, double stepx, double stepy)
 {
-    for (int i = 0; i < cld.size(); i++)
+    for (int i = 0; i < cld.getSize(); i++)
     {
-        double prevx = cld.getx_p(i);
-        cld.set_x_in_p(prevx + stepx, i);
-        double prevy = cld.gety_p(i);
-        cld.set_y_in_p(prevy + stepy, i);
+        double prevx = cld.getXofPoint(i);
+        cld.setXinPointByID(prevx + stepx, i);
+        double prevy = cld.getYofPoint(i);
+        cld.setYinPointByID(prevy + stepy, i);
         cld.center.setx(cld.center.getx() + stepx);
         cld.center.sety(cld.center.gety() + stepy);
     }
@@ -29,12 +29,12 @@ void Buffer::rotate(Cloud &cld, double degrees)
 {
     double a = degrees;
 
-    for (int i = 0 ; i < cld.size(); i++)
+    for (int i = 0 ; i < cld.getSize(); i++)
     {
-        double prevx = cld.getx_p(i) - cld.center.getx();
-        double prevy = cld.gety_p(i) - cld.center.gety();
-        cld.set_x_in_p(prevx*cos(a) - prevy*sin(a) + cld.center.getx(), i);
-        cld.set_y_in_p(prevx*sin(a) + prevy*cos(a) + cld.center.gety(), i);
+        double prevx = cld.getXofPoint(i) - cld.center.getx();
+        double prevy = cld.getYofPoint(i) - cld.center.gety();
+        cld.setXinPointByID(prevx*cos(a) - prevy*sin(a) + cld.center.getx(), i);
+        cld.setYinPointByID(prevx*sin(a) + prevy*cos(a) + cld.center.gety(), i);
     }
 }
 
@@ -45,14 +45,14 @@ void Buffer::copy(Cloud & cld)
 
 void Buffer::print()
 {
-    for (size_t i = 0; i < (size_t)cloud.size(); i++)
+    for (size_t i = 0; i < (size_t)cloud.getSize(); i++)
     {
-        cout << cloud.getx_p(i) << '\t';
-        cout << cloud.gety_p(i) << endl;
+        cout << cloud.getXofPoint(i) << '\t';
+        cout << cloud.getYofPoint(i) << endl;
     }
 }
 
 void Buffer::past(Field & field)
 {
-    field.add_cloud(cloud);
+    field.addCloud(cloud);
 }

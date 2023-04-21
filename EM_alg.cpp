@@ -115,12 +115,12 @@ vector <Cluster> Em_alg::turn_EM(int k, Field &field)
     vector <double> ux(k);
     vector <double> uy(k);
 
-    int N = field.size();
+    int N = field.getSize();
     vector <double> x(N);
     vector <double> y(N);
 
     vector <Cluster> clusters(k);
-    vector <Point> &points = field.get_points_reference();
+    vector <Point> &points = field.getPointsReference();
 
     for (int i = 0; i < k; i++)
     {

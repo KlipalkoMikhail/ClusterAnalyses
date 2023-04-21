@@ -60,11 +60,10 @@ void FindCluster::setName(std::string nm)
     name = nm;
 }
 
-vector <Cluster> & FindCluster::getFindedClusters()
+vector<Cluster> &FindCluster::getFindedClusters()
 {
     return findedClusters;
 }
-
 
 void FindCluster::setDBFID(int dbfid)
 {
@@ -79,8 +78,8 @@ int FindCluster::getDBFID()
 void FindCluster::printParameters()
 {
     cout << "findCluster: ";
-    cout     << "ID " << ID;
-    cout     << " FieldID " << FieldID
+    cout << "ID " << ID;
+    cout << " FieldID " << FieldID
          << " DBFID " << DBFID
          << " Name " << name
          << " Size " << size
@@ -95,8 +94,8 @@ FindCluster::FindCluster()
 }
 
 void FindCluster::setState(int st)
-{  
-    this -> state = st;
+{
+    this->state = st;
 }
 
 int FindCluster::getState()

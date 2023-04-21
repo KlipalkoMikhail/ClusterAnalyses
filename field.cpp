@@ -2,17 +2,17 @@
 #include "field.h"
 #include "cloud_parameters.h"
 
-void Field::add_cloud(Cloud &cld)
+void Field::addCloud(Cloud &cld)
 {
     clouds.resize(NCL + 1);
     clouds[NCL] = cld;
-    vector <Point> auxillary_points = cld.get_points();
-    for (int i = 0; i < cld.size(); i++)
+    vector <Point> auxillary_points = cld.getPoints();
+    for (int i = 0; i < cld.getSize(); i++)
     {
         points[N + i] = auxillary_points[i];
     }
     NCL++;
-    N += cld.size();
+    N += cld.getSize();
 }
 
 Field::Field()
@@ -30,7 +30,7 @@ Field::Field()
     D.resize(0);
 }
 
-Cloud Field::get_copy_cloud(int k)
+Cloud Field::getCloud(int k)
 {
      return clouds[k];
 }
@@ -55,7 +55,7 @@ void Field::setIsSaved(bool work)
     isSaved = work;
 }
 
-void Field::state_gen(CloudParameters cloud_parameters)
+void Field::generate(CloudParameters cloud_parameters)
 {
     using namespace std;
     default_random_engine generator;
@@ -63,13 +63,13 @@ void Field::state_gen(CloudParameters cloud_parameters)
     normal_distribution<double> distributiony(cloud_parameters.center_y, cloud_parameters.dispersion_y);
     int i = NCL;
 
-    clouds[i].create_space(cloud_parameters.size, i);
+    clouds[i].generate(cloud_parameters.size, i);
     clouds[i].center.setx(cloud_parameters.center_x);
     clouds[i].center.sety(cloud_parameters.center_x);
     NCL++;
 
     for (int k = 0; k < cloud_parameters.size; k++)
-        clouds[i].set_par_to_p(&points[N + k], k);
+        clouds[i].setPointByID(&points[N + k], k);
 
     for (int k = 0; k < cloud_parameters.size; k++)
     {
@@ -85,7 +85,7 @@ void Field::state_gen(CloudParameters cloud_parameters)
     state_work = 1;
 }
 
-int Field::file_save()
+int Field::saveInFile()
 {
     string filename = "OutField_" + to_string(ID) + ".txt";
     std::ofstream fout(filename, ios::out);
@@ -98,7 +98,7 @@ int Field::file_save()
     return 0;
 }
 
-int Field::size()
+int Field::getSize()
 {
     return N;
 }
@@ -111,27 +111,19 @@ bool Field::is_executed()
     return state_work;
 }
 
-vector <Cloud> *Field::get_cl()
+vector <Cloud> &Field::getCloudsReference()
 {
-    return &clouds;
+    return clouds;
 }
-double Field::getx_p(int k)
-{
-    return points[k].getx();
-}
-double Field::gety_p(int k)
-{
-    return points[k].gety();
-}
-Point Field::p(int k)
+Point Field::getPoint(int k)
 {
     return points[k];
 }
-vector <Point> Field::p()
+vector <Point> Field::getPoints()
 {
     return points;
 }
-Cloud & Field::get_cloud(int k)
+Cloud & Field::getCloudReference(int k)
 {   
     Cloud & cld = clouds[k];
     return cld;
@@ -147,7 +139,7 @@ void Field::setCenter(Point cen)
     center = cen;
 }
 
-vector <Point> & Field::get_points_reference()
+vector <Point> & Field::getPointsReference()
 {
     return points;
 }
@@ -160,7 +152,7 @@ Field::~Field()
     vector <double> ().swap(factors);
 }
 
-void Field::set_state_work(int state)
+void Field::setState(int state)
 {
     state_work = state;
 }

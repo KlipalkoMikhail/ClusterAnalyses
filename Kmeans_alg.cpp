@@ -7,8 +7,8 @@ using namespace std;
 
 vector <Cluster> Kmeans_alg::k_means(int k, Field &field)
 {
-    vector <Point> &points = field.get_points_reference();
-    int N = field.size();
+    vector <Point> &points = field.getPointsReference();
+    int N = field.getSize();
     vector <vector <short int>> MatrixOfBelonging(k);
     vector <Cluster> clusters(k);
 

@@ -4,9 +4,9 @@
 void saveDataInFiles(FindCluster &findCluster, Field &field)
 {
     vector <Cluster> &findedClusters = findCluster.getFindedClusters();
-    vector <Point> &points = field.get_points_reference();
+    vector <Point> &points = field.getPointsReference();
     int ClusterSize = findCluster.getSize();
-    int FieldSize = field.size();
+    int FieldSize = field.getSize();
     int FCID = findCluster.getID();
 
     //findCluster.printParameters();

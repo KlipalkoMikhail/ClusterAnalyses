@@ -5,3 +5,8 @@ for [i = 0:2] "".i.".dat"\
 w p lt 7 lc i + 1
 unset output
 set term win
+
+plot [-20:20][-20:20]\
+for [i = 0:3] "ClusterPoints_".i.".dat"\
+w p lt 7 lc i + 1, 'edges.dat' using 1:2       with lines lc rgb "black" lw 2 notitle,\
+  'edges.dat' using 1:2:(0.01) with circles fill solid lc rgb "gray" notitle

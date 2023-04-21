@@ -48,10 +48,10 @@ bool iscore(vector <vector<int>> &B, int k, int m)
 
 void printcl(Cluster cl, Field &field)
 {
-    int N = field.size();
+    int N = field.getSize();
     std::ofstream fout;
     std::ofstream foutother;
-    vector <Point> points = field.p();
+    vector <Point> points = field.getPoints();
     char filename[120];
     sprintf(filename, "%d.dat", 0);
     fout.open(filename);

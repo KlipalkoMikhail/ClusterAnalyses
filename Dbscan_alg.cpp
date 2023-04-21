@@ -10,7 +10,7 @@ vector <Cluster> Dbscan_alg::dbscan(int m, double r, Field &field)
     // ������� ��������, ������� ����������, ������� �����, ������� a, b, nul, ���������� N - ����� �����, T - ������
     vector <Cluster> clusters;
 
-    int N = field.size();
+    int N = field.getSize();
 
     vector <vector <double>> D;
     vector <vector <int>> B;
@@ -38,7 +38,7 @@ vector <Cluster> Dbscan_alg::dbscan(int m, double r, Field &field)
     {
         for (int j = 0; j < N; j++)
         {
-            D[i][j] = distance(field.p(i), field.p(j));
+            D[i][j] = distance(field.getPoint(i), field.getPoint(j));
             //step += D[i][j]/2;
         }
     }
@@ -131,7 +131,7 @@ vector <Cluster> Dbscan_alg::dbscan(int m, double r, Field &field)
     Cluster cl;
     cl.reserve(N);
 
-    vector <Point> points = field.p();
+    vector <Point> points = field.getPoints();
     for (int i = 0; i < N; i++)
     {
         if (!blong[i])

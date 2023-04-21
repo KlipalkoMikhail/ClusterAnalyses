@@ -34,7 +34,7 @@ void FieldLoader::printParametersInFieldFile(Field &field, fstream &data_base)
     block = to_string(field.getDBID());
     settings.makeLine(block, settings.getIDblock_width());
     data_base << block;
-    block = to_string(field.size());
+    block = to_string(field.getSize());
     settings.makeLine(block, settings.getNblock_width());
     data_base << block;
     block = to_string(field.getNFC());
@@ -86,7 +86,7 @@ void FieldLoader::resetKeysAndSaveRowSize(Field &field)
     ofstream fileRowSize("row_size.txt", ios::binary | ios::out);
     bool is_worked = true;
     field.setDBID(rowSize);
-    field.set_state_work(1);
+    field.setState(1);
     field.setIsSaved(is_worked);
     rowSize++;
     fileRowSize << rowSize;
@@ -111,8 +111,8 @@ void printPointsInFile(Field & field)
     string filename = "MyPoint_" + to_string(field.getDBID()) + ".txt";
     ofstream PointFile(filename, ios::out | ios:: binary);
 
-    vector <Point> points = field.get_points_reference();
-    int N = field.size();
+    vector <Point> points = field.getPointsReference();
+    int N = field.getSize();
 
     for (int i = 0; i < N; i++)
         PointFile << points[i].getNP() << " " << points[i].getx() << " " << points[i].gety() << endl;
@@ -173,7 +173,7 @@ void FieldLoader::loadPointsFile(Field &field, fstream &data_base)
 {
     string filename;
     ifstream points_file;
-    vector <Point> & points = field.get_points_reference();
+    vector <Point> & points = field.getPointsReference();
     Point point;
     double x, y;
     int NP;
@@ -205,7 +205,7 @@ void FieldLoader::setFlags(Field &field, int ID)
 {
     const int STATE = 1;
     field.setDBID(ID);
-    field.set_state_work(STATE);
+    field.setState(STATE);
     //cout << "IS EXEC: " << field.is_executed() << endl;
 }
 
@@ -238,7 +238,7 @@ void FieldLoader::loadNFC(Field &field, fstream & data_base)
 
 void printFieldP(Field & field)
 {
-    cout << "Loaded field ID = " << field.getID() << " DBFID = " << field.getDBID() << " SIZE = " << field.size()
+    cout << "Loaded field ID = " << field.getID() << " DBFID = " << field.getDBID() << " SIZE = " << field.getSize()
          << " Center = (" << field.center.getx() << ' ' << field.center.gety() << ")" << endl
          << "Factors = ("
          << field.factors[2] << ' '

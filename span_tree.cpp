@@ -10,9 +10,9 @@ using namespace std;
 void Span_tree::span_the_tree(Field & field)
 {
     vector <Cluster> clusters;
-    vector <Point> pt = field.p();
+    vector <Point> pt = field.getPoints();
 
-    int N = field.size();
+    int N = field.getSize();
 
     vector <short int> bl(N);
 
@@ -33,7 +33,7 @@ void Span_tree::span_the_tree(Field & field)
     // ������� ������� ����������
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
-            D[i][j] = distance(field.p(i), field.p(j));
+            D[i][j] = distance(field.getPoint(i), field.getPoint(j));
 
     double min = DBL_MAX;
     int x = 0;
@@ -106,7 +106,7 @@ void Span_tree::span_the_tree(Field & field)
     for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
             if (B[i][j])
-                fedge << distance(field.p(i), field.p(j)) << endl;
+                fedge << distance(field.getPoint(i), field.getPoint(j)) << endl;
     fedge.close();
     cout << "Success" << endl;
 

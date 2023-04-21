@@ -5,6 +5,7 @@
 #include <random>
 #include <iomanip>
 #include "controller.h"
+#include <random>
 #include <iterator>
 #include <utility>
 #include "factors.h"
@@ -12,6 +13,7 @@
 #include <list>
 #include <cmath>
 #include <stack>
+#include <ctime>
 #define EPSILON 0.000001
 
 void printFieldParam(Field &field);
@@ -31,12 +33,12 @@ void Controller::printActiveFields()
 void calculate_clusters_center(vector <Cluster> &clusters, Field &field)
 {
     Point center;
-    vector <Point> & points = field.get_points_reference();
+    vector <Point> & points = field.getPointsReference();
     double x = 0;
     double y = 0;
     int size = 0;
     int ClusterSize = clusters.size();
-    int N = field.size();
+    int N = field.getSize();
 
     for (int j = 0; j < ClusterSize; j++)
     {
@@ -183,7 +185,7 @@ void Controller::print_field(Field &field)
     }
 
     // сохраняем поле в файл
-    field.file_save();
+    field.saveInFile();
 
     // сохраняем результаты в лог-файл контроллера
     string message = "print field is executed with parameters " + to_string(field.getID());
@@ -203,11 +205,11 @@ void Controller::create_cloud(CloudParameters parameters)
     {
         fields.resize(fields_size + 1);
         fields_size += 1;
-        fields[parameters.field_index].set_state_work(1);
+        fields[parameters.field_index].setState(1);
     }
 
 
-    fields[parameters.field_index].state_gen(parameters);
+    fields[parameters.field_index].generate(parameters);
     fields[parameters.field_index].setID(parameters.field_index);
     fields[parameters.field_index].setDBID(parameters.field_index);
     //fields[parameters.field_index].PrintPointsInFile();
@@ -232,7 +234,7 @@ void Controller::print_cloud(int i, Field &field)
     // объявление файла, имени файла
     ofstream fout;
     char filename[120];
-    Cloud cloud = field.get_copy_cloud(i);
+    Cloud cloud = field.getCloud(i);
 
     // создаем имя для файла
     sprintf(filename, "cloud_%d.dat", i);
@@ -241,7 +243,7 @@ void Controller::print_cloud(int i, Field &field)
     fout.open(filename);
 
     // иницилизируем точки облака, points - точки облака
-    vector <Point> points = cloud.get_points();
+    vector <Point> points = cloud.getPoints();
 
     // печатаем в файл точки
     for (int j = 0; j < (int)points.size(); j++)
@@ -251,7 +253,7 @@ void Controller::print_cloud(int i, Field &field)
     fout.close();
 
     // проверяем на состояние создания облака и печатаем его на экран в случае наличия с точностью до шести знаков
-    if (cloud.work() != 1)
+    if (cloud.is_executed() != 1)
     {
         cout << "Cloud is not created\n" << endl;
         return;
@@ -292,7 +294,7 @@ void Controller::saveInFileFindCluster(Field &field, int launchIndex)
 
 void Controller::print_clouds(Field &field)
 {
-    vector <Cloud> clouds = *(field.get_cl());
+    vector <Cloud> &clouds = field.getCloudsReference();
 
     int k = field.getCloudsSize();
     cout << k << endl;
@@ -304,8 +306,8 @@ void Controller::print_clouds(Field &field)
         char filename[120];
         sprintf(filename, "%d.dat", i + 1);
         fout[i].open(filename);
-        vector <Point> points = clouds[k].get_points();
-        for (int j = 0; j < clouds[k].size(); j++)
+        vector <Point> points = clouds[k].getPoints();
+        for (int j = 0; j < clouds[k].getSize(); j++)
                 fout[i] << points[j].getx() << "\t\t" << points[j].gety() << endl;
     }
     string message = "print cloud is executed with parameters " + to_string(field.getID());
@@ -314,16 +316,16 @@ void Controller::print_clouds(Field &field)
 
 void Controller::calculate_factor(int k, Field &field)
 {
-    vector <Point> &arr = field.get_points_reference();
+    vector <Point> &arr = field.getPointsReference();
     if (k == 0)
     {
-        arr = field.get_points_reference();
+        arr = field.getPointsReference();
         field.factors = exec.factors.calculate_factors(arr);
     }
     if (k == 1)
     {
         for (int i = 0; i < field.getCloudsSize(); i++)
-            (field.get_cloud(i)).factors = exec.factors.calculate_factors((field.get_cloud(i)).get_points());
+            (field.getCloudReference(i)).factors = exec.factors.calculate_factors((field.getCloudReference(i)).getPoints());
     }
     if (k == 2)
     {
@@ -331,7 +333,7 @@ void Controller::calculate_factor(int k, Field &field)
         FindCluster &findCluster = sv.getFindCluster(field.getID(), LaunchIndex);
         vector <Cluster> & clusters = findCluster.getFindedClusters();
         int ClusterSize = clusters.size();
-        int FieldSize = field.size();
+        int FieldSize = field.getSize();
         vector <vector <Point>> cluster_points(FieldSize);
 
         cout << "Enter the launch index ";
@@ -358,7 +360,7 @@ void Controller::print_factors(int m, Field &field)
         vector <Cloud> cloud(field.getCloudsSize());
         for (int j = 0 ; j < field.getCloudsSize(); j++)
         {
-            Cloud & cld = field.get_cloud(j);
+            Cloud & cld = field.getCloudReference(j);
             cloud[j].factors = cld.factors;
         }
         ofstream cloudo;
@@ -435,7 +437,7 @@ void Controller::saveField(Field &field)
 void printFieldPa(Field & field)
 {
     cout << "ID is " << field.getID() << endl;
-    cout << "Size is " << field.size() << endl;
+    cout << "Size is " << field.getSize() << endl;
     cout << "Center is " << field.center.getx() << ' ' << field.center.gety() << endl;
     cout << "factors ";
     cout << field.factors[0] << endl;
@@ -448,9 +450,9 @@ void printFieldPa(Field & field)
          << field.factors[7] << endl;
    //cout << "Points X\tY" << endl;
    cout << "Is executed is " << field.is_executed() << endl;
-   vector <Point> & points = field.get_points_reference();
+   vector <Point> & points = field.getPointsReference();
 
-   for (int i = 0; i < field.size(); i++)
+   for (int i = 0; i < field.getSize(); i++)
    {
        //cout << points[i].getx() << " " << points[i].gety() << endl;
    }
@@ -566,7 +568,7 @@ void Controller::loadFindCluster(int DBFID, int findClusterID)
         int ClusterSize = findCluster.getSize();
         findedClusters.resize(ClusterSize);
         for (int i = 0; i < ClusterSize; i++)
-            findedClusters[i].reserve(field.size());
+            findedClusters[i].reserve(field.getSize());
         CLoader.loadClusters(findCluster);
 
         string message = "load find cluster is executed with parameters " + to_string(findClusterID) + " " +   
@@ -584,8 +586,8 @@ void Controller::calculate_center(Field &field)
 {
     double sum_x = 0;
     double sum_y = 0;
-    int field_size = field.size();
-    vector <Point> points = field.get_points_reference();
+    int field_size = field.getSize();
+    vector <Point> points = field.getPointsReference();
     for (int i = 0; i < field_size; i++)
     {
         //cout << points[i].getx() << '\t' << points[i].gety() << endl;
@@ -611,59 +613,118 @@ void Controller::print_center(Field &field)
     logger.info(message);
 }
 
-double d(Cluster x, Cluster y)
+double dist_center(Cluster &x, Cluster &y)
 {
     return distance(x.getCenter(), y.getCenter());
 }
 
+double dist_min(Cluster &x, Cluster &y, Field &field)
+{
+    vector <Point> &points = field.getPointsReference();
+    double min = -1;
+    for (int i = 0; i < field.getSize(); i++)
+    {
+        if (x.tr(i) == 0) continue;
+        for (int j = 0; j < field.getSize(); j++)
+        {
+            if (y.tr(j) == 1)
+            {
+                double temp = distance(points[i], points[j]);
+                //cout << temp << endl;
+                if (min == - 1) min = temp;
+                else if (min > temp) min = temp;
+                else continue;
+            } 
+            else continue;
+        }
+    }
+    return min;
+}
+
+double dist_max(Cluster &x, Cluster &y, Field &field)
+{
+    vector <Point> &points = field.getPointsReference();
+    double max = 0;
+    for (int i = 0; i < field.getSize(); i++)
+    {
+        if (x.tr(i) == 0) continue;
+        for (int j = i + 1; j < field.getSize(); j++)
+        {
+            if (y.tr(j) == 1)
+            {
+                double temp = distance(points[i], points[j]);
+                //cout << temp << endl;
+                if (max < temp) max = temp;
+            } 
+            else continue;
+        }
+    }
+    return max;
+}
+
+void print_cluster(Cluster &cluster)
+{
+    for (int k = 0 ; k < cluster.getFieldSize(); k++)
+        cout << cluster.tr(k) << ' ';
+    cout << endl;
+}
+
 void initAndFillClusters(vector <Cluster> &clusters, Field &field)
 {
-    int N = field.size();
-    for (int i = 0; i < static_cast <int> clusters.size(); i++)
+    int N = field.getSize();
+    for (int i = 0; i < static_cast <int> (clusters.size()); i++)
     {
         Cluster & cluster = clusters[i];
         cluster.reserve(N);
         cluster.add_p(i);
-        cluster.ccenter(field.get_points_reference(), N);
+        cluster.setCenter((field.getPointsReference())[i]);
     }
 }
 
 void initMatrix(vector <vector <double>> &A, vector <Cluster> &clusters)
 {
-    int N = static_cast <int> clusters.size();
+    int N = static_cast <int> (clusters.size());
     A.resize(N);
     for(int i = 0; i < N; i++)
         A[i].resize(N);
     for (int i = 0; i < N; i++)
-        for (int j = i + 1; j < N; j++)
-            A[i][j] = d(clusters[i], clusters[j]);
+        for (int j = 0; j < N; j++)
+            A[i][j] = dist_center(clusters[i], clusters[j]);
+            // A[i][j] = d(clusters[i], clusters[j]);
+            // A[i][j] = d(clusters[i], clusters[j]);
+
 }
 
-void uniteClusters(Cluster &x, Cluster &y)
+Cluster uniteClusters(Cluster x, Cluster &y)
 {
     int sizeRemnant = 0;
     Point newCenter, oldCenter_x = x.getCenter(), oldCenter_y = y.getCenter();
     newCenter.setx((oldCenter_x.getx() + oldCenter_y.getx())/2);
     newCenter.sety((oldCenter_x.gety() + oldCenter_y.gety())/2);
 
-    for (int i = 0; i < static_cast <int> blong.size(); i++)
+    for (int i = 0; i < x.getFieldSize(); i++)
     {
-        if (y.tr(i) && !x.tr(i))
+        if (y.tr(i))
         {
-            x.add_p(i);
-            sizeRemnant++;
+            if (x.tr(i) == 0)
+            {
+                x.add_p(i);
+                sizeRemnant++;
+            }
         }
     }
     x.setCenter(newCenter);
     x.setSize(x.getSize() + sizeRemnant);
+    //cout << "======" << endl;
     return x;
 }
 
 pair <int, int> findMinimalClusters(vector <vector <double>> &A)
 {
     pair <int, int> minimals = {0, 0};
-    int N = static_cast <int> A.size();
-    if (N == 1) return minimals
+    int N = static_cast <int> (A.size());
+    //cout << fixed << setprecision(3);
+    if (N == 1) return minimals;
     else
     {
         double min = A[0][1];
@@ -671,6 +732,7 @@ pair <int, int> findMinimalClusters(vector <vector <double>> &A)
         {
             for (int j = i + 1; j < N; j++)
             {
+                //cout << A[i][j] << ' ';
                 if (min >= A[i][j])
                 {
                     min = A[i][j];
@@ -678,41 +740,206 @@ pair <int, int> findMinimalClusters(vector <vector <double>> &A)
                     minimals.second = j;
                 }
             }
+            //cout << endl;
         }
     }
+    //cout << endl;
     return minimals;
 }
 
-void eraseColumn(vector <vector <double>> DistanceMatrix, int j)
+void eraseColumn(vector <vector <double>> &A, int j)
 {
-    for (int i = 0; i < static_cast <int> DistanceMatrix[0].size(); i++)
-        DistanceMatrix.erase(DistanceMatrix.begin() + j);
+    for (size_t i = 0; i < A.size(); i++)
+        A[i].erase(A[i].begin() + j);
 }
 
-void Controller::hierarchical(Field &field)
+void printInGNU(vector <pair <Cluster, Cluster>> &Stack)
+{   
+    ofstream gnufile("edges.dat", ios::binary);
+    pair <Cluster, Cluster> topItem;
+    size_t size = Stack.size();
+    for (size_t i = 0; i < size; i++)
+    {
+        topItem = Stack[size - i - 1];
+        pair <Point, Point> pair_centers = {topItem.first.getCenter(), topItem.second.getCenter()};
+        gnufile << pair_centers.first.getx() << ' ' << pair_centers.first.gety() << endl;
+        gnufile << pair_centers.second.getx() << ' ' << pair_centers.second.gety() << endl << endl;
+    }
+    gnufile.close();
+}
+
+void recalculateMatrix(vector <vector <double>> &A, vector <Cluster> &clusters, Field &field)
 {
-    int N = field.size();
+    for (size_t i = 0; i < A.size(); i++)
+        for (size_t j = i + 1; j < A[i].size(); j++)
+        {
+            //cout << i << ' ' << j << endl;
+            A[i][j] = dist_center(clusters[i], clusters[j]);
+            //A[i][j] = dist_min(clusters[i], clusters[j], field);
+            //A[i][j] = dist_max(clusters[i], clusters[j], field);
+        }
+            
+}
+
+void printGNUclusters(vector <Cluster> &clusters, Field &field)
+{
+    ofstream gnufile;
+    string filename;
+    size_t clustersSize = clusters.size();
+    vector <Point> &points = field.getPointsReference();
+    for (size_t i = 0; i < clustersSize; i++)
+    {
+        filename = "ClusterPoints_" + to_string(i) + ".dat";
+        gnufile.open(filename);
+        for (size_t j = 0; j < static_cast <size_t> (field.getSize()); j++)
+        {
+            if (clusters[i].tr(j) == 1)
+                gnufile << points[j].getx() << ' ' << points[j].gety() << endl;
+        }
+        gnufile.close();
+    }
+} 
+
+
+void findMode(vector <pair <Cluster, Cluster>> hierarchicalStack, Field &field)
+{
+    size_t size = hierarchicalStack.size();
+    vector <pair <int, double>> amount(size + 1);
+    vector <double> distances(size);
+    if (size == 0) throw MyException("size is zero");
+
+    for (size_t i = 0; i < size; i++)
+    {
+        pair<Cluster, Cluster> clusterPair = hierarchicalStack[size - i - 1];
+        distances[i] = dist_center(clusterPair.first, clusterPair.second);
+        //distances[i] = dist_min(clusterPair.first, clusterPair.second, field);
+        //distances[i] = dist_max(clusterPair.first, clusterPair.second, field);
+    }
+
+    double min = distances[0];
+    double max = distances[0];
+    for (size_t i = 0; i < size; i++)
+    {
+        if (min >= distances[i])
+            min = distances[i];
+        if (max <= distances[i])
+            max = distances[i];
+    }
+
+    double length = max - min;
+    double h = (max - min)/size;
+
+    for (size_t i = 0; i <= size; i++)
+    {
+        amount[i].first = 0;
+        amount[i].second = min + i*h;
+    }
+
+    for (size_t i = 0; i < size; i++)
+    {
+        for (size_t j = 0; j < size; j++)
+        {
+            if (amount[i].second <= distances[j] && distances[j] <= amount[i + 1].second)
+                amount[i].first += 1;
+        }
+    }
+
+    pair <size_t, size_t> max_space = {0, 0};
+    size_t max_space_temp = 0;
+    for (size_t i = 0; i < size; i++)
+    {
+        if (amount[i].first == 0)
+        {
+            max_space_temp++;
+            if (amount[i + 1].first != 0 && max_space_temp >= max_space.first)
+            {
+                max_space.first = max_space_temp;
+                max_space.second = i;
+                max_space_temp = 0; 
+            }
+        }
+    }
+
+
+    //cout << max_space.first << endl;
+    //cout << size - max_space.second << endl;
+    //cout << amount[max_space.second].second << endl;
+    //cout << amount[max_space.second - max_space.first].second << endl;
+
+    vector <Cluster> clusters;
+
+    for (size_t i = 0; i < size; i++)
+    {
+        pair<Cluster, Cluster> clusterPair = hierarchicalStack[size - i - 1];
+        if (distances[i] > amount[max_space.second].second)
+        {
+            clusters.push_back(clusterPair.first);
+            clusters.push_back(clusterPair.second);
+        }
+    }
+    printGNUclusters(clusters, field);
+}
+
+void Controller::hierarchical(int FID)
+{
+    Field &field = fields[FID];
+    int N = field.getSize();
     vector <vector <double>> DistanceMatrix;
     vector <Cluster> clusters(N);
     pair <int, int> minimalDistanceClustersIndex;
     pair <Cluster, Cluster> minimalDistanceClusters;
-    stack <pair <Cluster, Cluster>> hierarchicalStack;
+    vector <pair <Cluster, Cluster>> hierarchicalStack;
 
     initAndFillClusters(clusters, field);
-    initMatrix(DistanceMatrix, N);
+    initMatrix(DistanceMatrix, clusters);
 
     while (N != 1)
     {
         minimalDistanceClustersIndex = findMinimalClusters(DistanceMatrix);
         minimalDistanceClusters.first = clusters[minimalDistanceClustersIndex.first];
         minimalDistanceClusters.second = clusters[minimalDistanceClustersIndex.second];
+        //cout << minimalDistanceClustersIndex.first << ' ' << minimalDistanceClustersIndex.second << endl;
+        hierarchicalStack.push_back(minimalDistanceClusters);
 
-        hierarchicalStack.push(minimalDistanceClusters);
-        uniteClusters(minimalDistanceClusters.first, minimalDistanceClusters.second);
+        Cluster clust = uniteClusters(minimalDistanceClusters.first, minimalDistanceClusters.second);
+        clusters[minimalDistanceClustersIndex.first] = clust;
 
+        DistanceMatrix.erase(DistanceMatrix.begin() + minimalDistanceClustersIndex.second);
         eraseColumn(DistanceMatrix, minimalDistanceClustersIndex.second);
         clusters.erase(clusters.begin() + minimalDistanceClustersIndex.second);
         N--;
-        cout << "N " << N << " done" << endl;
+        recalculateMatrix(DistanceMatrix, clusters, field);
+        //cout << "N " << N << " done" << endl;
     }
+
+    findMode(hierarchicalStack, field);
+    printInGNU(hierarchicalStack);
+
+
+    string message = "turn hier is executed with parameters " + to_string(FID);
+    cout << message << endl;
+    logger.info(message);
 }
+
+double regression_function(double x)
+{
+    return cos(2 * x) + sin(x) - x*x*x;
+}
+
+void Controller::regression(int FID)
+{
+    size_t size = 250;
+    double first = 0;
+    double last = 5;
+    default_random_engine generator(time(0));
+    uniform_real_distribution<double> distribution(first, last);
+    vector <Point> initial_data;
+    for (size_t i = 0; i < size; i++)
+    {
+        double x = distribution(generator);
+        initial_data.push_back(Point(x, regression_function(x)));
+    }
+
+}
+
+

@@ -1,11 +1,4 @@
-Sat Apr 08 12:35:09 2023 INFO Requested create cloud with parameters 250 0.000000 0.000000 2.000000 1.000000 0
-Sat Apr 08 12:35:09 2023 INFO Requested create cloud with parameters 250 1.000000 1.000000 1.000000 1.000000 1
-Sat Apr 08 12:35:09 2023 INFO Kmeans is executed with parameters 3 0
-Sat Apr 08 12:35:09 2023 INFO dbscan is executed with parameters 3 1.850000 0
-Sat Apr 08 12:35:09 2023 INFO calculate factors is executed with parameters 0 0
-Sat Apr 08 12:35:09 2023 INFO calculate factors is executed with parameters 0 1
-Sat Apr 08 12:35:09 2023 INFO calculated center with parameters 0
-Sat Apr 08 12:35:09 2023 INFO calculated center with parameters 1
-Sat Apr 08 12:35:09 2023 INFO save field is executed with parameters 0
-Sat Apr 08 12:35:09 2023 INFO save field is executed with parameters 1
-Sat Apr 08 12:35:09 2023 INFO save find cluster is executed with parameters 0
+Fri Apr 21 21:13:39 2023 INFO Requested create cloud with parameters 250 1.000000 1.000000 1.000000 1.000000 0
+Fri Apr 21 21:13:39 2023 INFO Requested create cloud with parameters 250 10.000000 10.000000 1.000000 1.000000 0
+Fri Apr 21 21:13:39 2023 INFO Requested create cloud with parameters 250 -10.000000 5.000000 1.000000 1.000000 0
+Fri Apr 21 21:13:43 2023 INFO turn hier is executed with parameters 0

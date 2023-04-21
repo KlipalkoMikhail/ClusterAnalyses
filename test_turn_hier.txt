@@ -1,0 +1,5 @@
+create_cloud 0 250 1 1 1 1
+create_cloud 0 250 10 10 1 1
+create_cloud 0 250 -10 5 1 1
+turn_hier 0
+exit

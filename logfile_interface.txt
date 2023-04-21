@@ -1,12 +1,5 @@
-Sat Apr 08 12:35:09 2023 INFO Requested create cloud with parameters 250 0.000000 0.000000 2.000000 1.000000 0
-Sat Apr 08 12:35:09 2023 INFO Requested create cloud with parameters 250 1.000000 1.000000 1.000000 1.000000 1
-Sat Apr 08 12:35:09 2023 INFO Requested k-means algorithm with parameters 0 3
-Sat Apr 08 12:35:09 2023 INFO Requested dbscan algorithm with parameters 0 3 1.850000
-Sat Apr 08 12:35:09 2023 INFO Requested calculate factors with parameters 0 0
-Sat Apr 08 12:35:09 2023 INFO Requested calculate factors with parameters 1 0
-Sat Apr 08 12:35:09 2023 INFO Requested calculate center with parameters 0
-Sat Apr 08 12:35:09 2023 INFO Requested calculate center with parameters 1
-Sat Apr 08 12:35:09 2023 INFO Requested save field with parameters 0
-Sat Apr 08 12:35:09 2023 INFO Requested save field with parameters 1
-Sat Apr 08 12:35:09 2023 INFO Requested save find cluster with parameters 0 0
-Sat Apr 08 12:35:09 2023 INFO Requested save find cluster with parameters 1 0
+Fri Apr 21 21:13:39 2023 INFO Requested create cloud with parameters 250 1.000000 1.000000 1.000000 1.000000 0
+Fri Apr 21 21:13:39 2023 INFO Requested create cloud with parameters 250 10.000000 10.000000 1.000000 1.000000 0
+Fri Apr 21 21:13:39 2023 INFO Requested create cloud with parameters 250 -10.000000 5.000000 1.000000 1.000000 0
+Fri Apr 21 21:13:39 2023 INFO Requested turn hierarhical algorithm with parameters 0
+Fri Apr 21 21:13:43 2023 INFO Requested exit

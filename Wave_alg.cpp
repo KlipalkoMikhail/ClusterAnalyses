@@ -6,21 +6,21 @@
 
 using namespace std;
 
-vector <Cluster> Wave_alg::wave(double mode, Field &field)
+vector<Cluster> Wave_alg::wave(double mode, Field &field)
 {
-    vector <Point> points = field.p();
+    vector<Point> points = field.getPoints();
     char filename[120];
     ofstream gnufile;
-    vector <Cluster> clusters;
+    vector<Cluster> clusters;
 
-    int N = field.size();
+    int N = field.getSize();
 
-    vector <vector <double>> D;
-    vector <vector <int>> B;
+    vector<vector<double>> D;
+    vector<vector<int>> B;
 
-    vector <int> a(N);
-    vector <int> b(N);
-    vector <int> nul(N);
+    vector<int> a(N);
+    vector<int> b(N);
+    vector<int> nul(N);
 
     int T = 1;
 
@@ -40,7 +40,7 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
     {
         for (int j = 0; j < N; j++)
         {
-            D[i][j] = distance(field.p(i), field.p(j));
+            D[i][j] = distance(field.getPoint(i), field.getPoint(j));
         }
     }
 
@@ -49,9 +49,10 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
     {
         for (int j = 0; j < N; j++)
         {
-            if(D[i][j] < mode)
+            if (D[i][j] < mode)
                 B[i][j] = 1;
-            else B[i][j] = 0;
+            else
+                B[i][j] = 0;
         }
     }
 
@@ -59,11 +60,11 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
     D.clear();
 
     // ������� �����: index - �����, �������� � ������ T, indexnew - ��� ������ ���� �������� �����
-    list <int> index;
-    list <int> indexnew;
+    list<int> index;
+    list<int> indexnew;
     // ������� �������: temp - ������ ��� ������ ��������, blong - ������ �������� � �� �������� �����
-    vector <int> temp(N);
-    vector <int> blong(N);
+    vector<int> temp(N);
+    vector<int> blong(N);
 
     // �������� �����
     int i = 0;
@@ -78,13 +79,13 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
             cl.add_p(k);
             b = a;
             index.push_back(k);
-            while(1)
+            while (1)
             {
-                for(list <int> :: iterator it = index.begin(); it != index.end(); it++)
+                for (list<int>::iterator it = index.begin(); it != index.end(); it++)
                 {
-                    for(i = 0 ; i < N; i++)
+                    for (i = 0; i < N; i++)
                     {
-                        if(((B[*it][i]) == 1) && (a[i] == 0) && (blong[i] == 0))
+                        if (((B[*it][i]) == 1) && (a[i] == 0) && (blong[i] == 0))
                         {
                             // �������� �����
                             b[i] = T + 1;
@@ -105,12 +106,13 @@ vector <Cluster> Wave_alg::wave(double mode, Field &field)
                 sprintf(filename, "gnu_%d.dat", i);
                 i++;
                 gnufile.open(filename);
-                for(list <int> :: iterator it = index.begin(); it != index.end(); it++)
+                for (list<int>::iterator it = index.begin(); it != index.end(); it++)
                 {
                     gnufile << points[*it].getx() << "\t" << points[*it].gety() << endl;
                 }
                 gnufile.close();
-                if (a == b) break;
+                if (a == b)
+                    break;
                 temp = a;
                 a = b;
                 T = T + 1;

@@ -36,7 +36,7 @@ public:
     string HELP = "help";
     string PRINT_ACTIVE_FIELDS = "print_active_fields";
     string PRINT_LAUNCHES = "print_launches";
-    string turn_hier = "turn_hier"
+    string turn_hier = "turn_hier";
 };
 
 class InterfaceSettings
@@ -74,6 +74,7 @@ class Interface
         void request_is_dbscan_string();
         void request_is_kmeans_string();
         void request_is_expmax_string();
+        void request_is_turn_hier();
         void request_is_wave_string();
         void request_is_calculate_factors();
         void request_is_calculate_center();

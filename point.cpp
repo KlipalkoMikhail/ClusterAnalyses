@@ -8,6 +8,12 @@ Point::Point()
     colour = 0;
 }
 
+Point::Point(double x1, double x2)
+{
+    this -> x = x1;
+    this -> y = x2;
+}
+
 Point::Point(const Point& point)
 {
     x = point.getx();

@@ -37,6 +37,7 @@ public:
     string PRINT_ACTIVE_FIELDS = "print_active_fields";
     string PRINT_LAUNCHES = "print_launches";
     string turn_hier = "turn_hier";
+    string regression = "regression";
 };
 
 class InterfaceSettings
@@ -92,6 +93,7 @@ class Interface
         void request_is_exit_string();
         void request_is_print_active_fields();
         void request_is_print_launches();
+        void request_is_regression();
         ~Interface();
 
 };

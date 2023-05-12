@@ -405,6 +405,22 @@ void Interface::request_is_turn_hier()
     controller.hierarchical(field_index);
 }
 
+void Interface::request_is_regression()
+{
+    cout << "Regression\n";
+    double window_width = 0;
+    int field_index = 0;
+
+    cout << "Enter field index (starts with 0)\n";
+    cin >> field_index;
+    cout << "Enter the width window: " <<  endl;
+    cin >> window_width;
+    controller.regression(0, window_width);
+
+    string message = "Requested turn regressiong algorithm with parameters";
+    logger.info(message);
+}
+
 void Interface::request_is_exit_string()
 {
     string message = "Requested exit";
@@ -476,6 +492,8 @@ int Interface::Starts()
         request_is_print_launches();
     else if (request == commands.turn_hier)
         request_is_turn_hier();
+    else if (request == commands.regression)
+        request_is_regression();
     else if (request == commands.EXIT)
     {
         request_is_exit_string();

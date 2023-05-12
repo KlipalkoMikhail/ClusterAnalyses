@@ -44,7 +44,7 @@ class Controller
         void print_launches();
         void hierarchical(int FID);
         void printActiveFields();
-        void regression(int FID);
+        void regression(int FID, double h);
         Field & getFieldByFID(int FID);
         ~Controller();
 };

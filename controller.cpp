@@ -921,25 +921,151 @@ void Controller::hierarchical(int FID)
     logger.info(message);
 }
 
-double regression_function(double x)
+// double regression_function(double x)
+// {
+//     return cos(2 * x) + sin(x) - x*x*x;
+// }
+
+// void Controller::regression(int FID)
+// {
+//     size_t size = 250;
+//     double first = 0;
+//     double last = 5;
+//     default_random_engine generator(time(0));
+//     uniform_real_distribution<double> distribution(first, last);
+//     vector <Point> initial_data;
+//     for (size_t i = 0; i < size; i++)
+//     {
+//         double x = distribution(generator);
+//         initial_data.push_back(Point(x, regression_function(x)));
+//     }
+
+// }
+
+//----------------------------------------------------------------
+
+double Kernel(double x)
 {
-    return cos(2 * x) + sin(x) - x*x*x;
+    double Pi = 3.14;
+    return exp(-2*x*x)/(sqrt(2*Pi));
 }
 
-void Controller::regression(int FID)
+template <class T>
+double Norm(T &x, T& y)
 {
-    size_t size = 250;
-    double first = 0;
-    double last = 5;
-    default_random_engine generator(time(0));
-    uniform_real_distribution<double> distribution(first, last);
-    vector <Point> initial_data;
-    for (size_t i = 0; i < size; i++)
+    return x > y ? x - y: y - x;
+}
+
+vector <size_t> KernelNeighbors(double h, double u, vector <double> &x)
+{
+    vector <size_t> neighbors;
+    size_t N = x.size();
+    for (size_t i = 0; i < N; i++)
+        if (Norm<double>(u, x[i]) < h) neighbors.push_back(i);
+    return neighbors;
+}
+double fun(double x)
+{
+    return cos(2*x) + sin(x) - x*x*x;
+}
+
+pair <double, double> findSampleBounds(const vector <double> &sample_x)
+{
+    if (sample_x.size() == 0) throw MyException("sample_x must be non-empty");
+
+    pair <double, double> bounds = {sample_x[0], sample_x[0]};
+    size_t sampleSize = sample_x.size();
+
+    for (size_t i = 0; i < sampleSize; i++)
     {
-        double x = distribution(generator);
-        initial_data.push_back(Point(x, regression_function(x)));
+        if (sample_x[i] < bounds.first) bounds.first = sample_x[i];
+        if (sample_x[i] > bounds.second) bounds.second = sample_x[i];
     }
 
+    return bounds;
 }
 
+double mean(const vector <double> &y)
+{
+    size_t size = y.size();
+    double sum = 0.0;
+    for (size_t i = 0; i < size; i++)
+        sum += y[i];
+    sum /= size;
+    return sum;
+}
+
+void predictData(vector <double> &sample_x, vector <double> &sample_y, vector <double> &predicted_x, vector <double> &predicted_y, double window_width)
+{
+    size_t predictedSize = predicted_x.size();
+    double mean_y = mean(sample_y);
+    pair <double, double> sampleBounds;
+    sampleBounds = findSampleBounds(sample_x);
+    double stepForPredictedSample = (sampleBounds.second - sampleBounds.first)/predictedSize;
+
+    for (size_t i = 0; i < predictedSize; i++)
+    {
+        predicted_x[i] = sampleBounds.first + stepForPredictedSample*i;
+        vector <size_t> neighbors = KernelNeighbors(window_width, predicted_x[i], sample_x);
+        size_t neighborsSize = neighbors.size();
+        
+        double numerator = 0;
+        double denominator = 0;
+
+        for (size_t j = 0; j < neighborsSize; j++)
+        {
+            numerator += Kernel((Norm(predicted_x[i], sample_x[neighbors[j]]))/window_width)*(sample_y[neighbors[j]]);
+            denominator += Kernel((Norm(predicted_x[i], sample_x[neighbors[j]]))/window_width);
+        }
+
+        if (fabs(denominator) < 1e-16) predicted_y[i] = mean_y;
+        else
+            predicted_y[i] = numerator/denominator;
+    }
+}
+
+void initiliazeSample(vector <double> &sample_x, vector <double> &sample_y, vector <Point> &points)
+{
+    size_t sampleSize = sample_x.size();
+    for (size_t i = 0; i < sampleSize; ++i)
+    {
+        sample_x[i] = points[i].getx();
+        sample_y[i] = points[i].gety();
+    }
+}
+
+void saveInGnuFile(const vector <double> &sample_x, const vector <double> &sample_y, const vector <double> &predicted_x, const vector <double> &predicted_y)
+{
+    size_t sampleSize = sample_x.size();
+    size_t predictedSize = predicted_x.size();
+    ofstream gnufile("output_predictions.dat");
+
+    for (size_t i = 0; i < predictedSize; i++)
+        gnufile << predicted_x[i] << ' ' << predicted_y[i] << endl;
+    gnufile.close();
+
+    ofstream gnufile_initial("input_sample.dat");
+    for (size_t i = 0; i < sampleSize; i++)
+        gnufile_initial << sample_x[i] << ' ' << sample_y[i] << endl;
+    gnufile_initial.close();
+
+    cout << "Done" << endl;
+}
+
+void Controller::regression(int fieldID, double window_width)
+{
+    vector <Point> &points = fields[fieldID].getPointsReference();
+    size_t sampleSize = static_cast <size_t> (fields[fieldID].getSize());
+    size_t predictedCoefficient = 3;
+    size_t predictedSize = predictedCoefficient*sampleSize;
+
+    vector <double> sample_x(sampleSize);
+    vector <double> sample_y(sampleSize);
+    vector <double> predicted_x(predictedSize);
+    vector <double> predicted_y(predictedSize);
+
+    initiliazeSample(sample_x, sample_y, points);
+    predictData(sample_x, sample_y, predicted_x, predicted_y, window_width);
+    saveInGnuFile(sample_x, sample_y, predicted_x, predicted_y);
+}
 

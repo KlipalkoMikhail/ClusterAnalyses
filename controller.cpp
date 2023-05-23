@@ -461,13 +461,10 @@ void printFieldPa(Field & field)
 void Controller::loadField(int id)
 {
     try{
-        fields.resize(fields_size + 1);
-        Field &field = fields[fields_size];
-        field.setID(fields_size);
-        fields_size++;
+        Field &field = fields[0];
+        field.setID(id);
         FieldLoader &Loader = DataBaseLoader.getFieldLoader();
         Loader.loadField(field, id);
-        //printFieldPa(field);
         string message = "load field is executed with parameters " + to_string(id);
         logger.info(message);
     }
@@ -546,9 +543,9 @@ void Controller::saveFindCluster(int FID, int FCID)
 void Controller::loadFindCluster(int DBFID, int findClusterID)
 {
     cout.unsetf(ios::showpos);
-    cout << "Loading find clusters DBFID=" << DBFID << " FCID=" << findClusterID << endl;
+    //cout << "Loading find clusters DBFID=" << DBFID << " FCID=" << findClusterID << endl;
     try{
-        Field & field = getFieldByFID(DBFID);
+        Field & field = fields[0];
         int FID = field.getID();
         if (!field.is_executed())
             throw MyException("Field is not loaded");
